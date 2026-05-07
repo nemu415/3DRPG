@@ -244,6 +244,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   m_Hp: 0
   m_Mp: 0
+  m_Type: 0
+  m_Player: {fileID: 5771954394473377392}
 --- !u!1 &644325296
 GameObject:
   m_ObjectHideFlags: 0
@@ -686,6 +688,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MessageText
   m_MessageText: {fileID: 972025032}
   m_BattleText: {fileID: 4900000, guid: a109056d098234a40878f4b132083d52, type: 3}
+  m_Player: {fileID: 5771954394473377392}
+  m_Enemy: {fileID: 255119829}
 --- !u!1 &996083219
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,6 +1353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   m_Hp: 0
   m_Mp: 0
+  m_Type: 0
   m_Enemy: {fileID: 255119829}
 --- !u!1 &6303947218031592677
 GameObject:

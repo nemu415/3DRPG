@@ -9,6 +9,19 @@ public class Player : MonoBehaviour
     private int m_Power;
     private int m_Magic;
     private int m_Speed;
+    private string m_Name;
+
+    public enum PlayerMagicType
+    {
+        炎,
+        水,
+        雷,
+        回復,
+        MAGIC_TYPE_MAX,
+        MAGIC_TYPE_NONE = -1,
+    }
+
+    public PlayerMagicType m_Type;
 
     [SerializeField]
     private Enemy m_Enemy;
@@ -20,41 +33,31 @@ public class Player : MonoBehaviour
         m_Power = 5;
         m_Magic = 10;
         //m_Speed = 50;
+        m_Type = PlayerMagicType.炎;
+        m_Name = "Player";
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Attack();
-            Debug.Log("攻撃");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            Magic();
-            Debug.Log("魔法");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            Debug.Log("アイテム");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            Debug.Log("逃げる");
-        }
+
     }
+
+    public int GetPower() { return m_Power; }
+    public int GetMagic() { return m_Magic; }
+
+    public string GetName() { return m_Name; }
 
     public void Damage(int  damage)
     {
         m_Hp -= damage;
     }
 
-    private void Attack()
+    public void Attack()
     {
         m_Enemy.Damage(m_Power);
     }
 
-    private void Magic()
+    public void Magic()
     {
         m_Enemy.Damage(m_Magic);
         m_Mp -= 5;

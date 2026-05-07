@@ -1,0 +1,12 @@
+バトル開始!,
+Player は どうする？,
+1:攻撃 2:魔法 3:アイテム 4:逃げる,
+Playerの攻撃！,
+(Enemy)に()ダメージ！,
+Playerの()魔法！,
+(Enemy)に()ダメージ！,
+Enemyの攻撃！,
+(Player)に()ダメージ！,
+Enemyの()魔法！,
+(Player)に()ダメージ！,
+ENDTEXT
