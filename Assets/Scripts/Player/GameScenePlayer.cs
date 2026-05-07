@@ -2,16 +2,27 @@ using UnityEngine;
 
 public class GameScenePlayer : MonoBehaviour
 {
-    private Rigidbody m_Rigidbody = null;
+    private Rigidbody m_Rigidbody;
 
-    [SerializeField]
-    private float m_MoveSpeed = 15.0f;
+    // --- Player用 ---
+    [SerializeField] private float m_MoveSpeed = 5f;
+    [SerializeField] private float m_RotationSpeed = 5f;
+    [SerializeField] private float m_JumpPow = 5f;
 
-    [SerializeField]
-    private float m_RotationSpeed = 3.0f;
+    // --- カメラ用 ---
+    [SerializeField] private Transform cameraPivot;
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private float cameraDistance = 5f;
+    [SerializeField] private float minDistance = 2f;
+    [SerializeField] private float maxDistance = 8f;
+    [SerializeField] private float zoomSpeed = 2f;
+    [SerializeField] private float minPitch = -30f;
+    [SerializeField] private float maxPitch = 45f;
 
-    [SerializeField]
-    private float m_JumpPow = 5.0f;
+    private float cameraPitch = 0f;
+    private Vector3 moveInput = Vector3.zero;
+    private float jumpRequest = 0f;
+
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -19,30 +30,75 @@ public class GameScenePlayer : MonoBehaviour
 
     void Update()
     {
-        Vector3 moveXZ = Vector3.zero;
+        // --- カメラ回転 ---
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
 
-        float mouseX = Input.GetAxis("Mouse X") * m_RotationSpeed;
+        cameraPivot.Rotate(0, mouseX, 0);
 
-        transform.Rotate(0, mouseX, 0);
+        cameraPitch -= mouseY;
+        cameraPitch = Mathf.Clamp(cameraPitch, minPitch, maxPitch);
+        playerCamera.transform.localEulerAngles = new Vector3(cameraPitch, 0, 0);
 
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            moveXZ = transform.forward * m_MoveSpeed;
-        }
+        // --- ズーム ---
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        cameraDistance -= scroll * zoomSpeed;
+        cameraDistance = Mathf.Clamp(cameraDistance, minDistance, maxDistance);
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            moveXZ = -transform.forward * m_MoveSpeed;
-        }
+        // --- 移動入力 ---
+        moveInput = Vector3.zero;
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            moveXZ += transform.right * m_MoveSpeed;
-        }
+        Vector3 camForward = cameraPivot.forward;
+        Vector3 camRight = cameraPivot.right;
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            moveXZ -= transform.right * m_MoveSpeed;
-        }
+        camForward.y = 0;
+        camRight.y = 0;
+
+        camForward.Normalize();
+        camRight.Normalize();
+
+        if (Input.GetKey(KeyCode.W)) moveInput += camForward;
+        if (Input.GetKey(KeyCode.S)) moveInput -= camForward;
+        if (Input.GetKey(KeyCode.D)) moveInput += camRight;
+        if (Input.GetKey(KeyCode.A)) moveInput -= camRight;
+
+        moveInput = moveInput.normalized * m_MoveSpeed;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            jumpRequest = m_JumpPow;
     }
+
+    void FixedUpdate()
+    {
+        // プレイヤーの向きを移動方向に合わせる
+        if (moveInput.sqrMagnitude > 0.1f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(moveInput);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.fixedDeltaTime * m_RotationSpeed);
+        }
+
+        float y = m_Rigidbody.linearVelocity.y;
+
+        if (jumpRequest != 0)
+        {
+            y = jumpRequest;
+            jumpRequest = 0;
+        }
+
+        m_Rigidbody.linearVelocity = new Vector3(moveInput.x, y, moveInput.z);
+    }
+
+    void LateUpdate()
+    {
+        // Pivotのローカル後方にカメラを配置
+        Vector3 localOffset = new Vector3(0, 0, -cameraDistance);
+
+        // Pivotの回転を適用してワールド座標へ
+        playerCamera.transform.position = cameraPivot.TransformPoint(localOffset);
+
+        // カメラの向きはPivotに合わせる
+        playerCamera.transform.rotation = cameraPivot.rotation;
+    }
+
 }
+
