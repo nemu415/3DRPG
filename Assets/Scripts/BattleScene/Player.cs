@@ -2,14 +2,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int m_Hp;
+    private int m_Hp;
     private static int m_MaxHp = 100;
-    public int m_Mp;
-    private static int m_MaxMp = 100;
+    private int m_Mp;
+    private static int m_MaxMp = 8;
     private int m_Power;
     private int m_Magic;
     private int m_Speed;
     private string m_Name;
+    private bool m_Acted;
 
     public enum PlayerMagicType
     {
@@ -32,9 +33,10 @@ public class Player : MonoBehaviour
         m_Mp = m_MaxMp;
         m_Power = 5;
         m_Magic = 10;
-        //m_Speed = 50;
+        m_Speed = 10;
         m_Type = PlayerMagicType.‰Š;
         m_Name = "Player";
+        m_Acted = false;
     }
 
     private void Update()
@@ -42,10 +44,22 @@ public class Player : MonoBehaviour
 
     }
 
+    public int GetHP() { return m_Hp; }
+
+    public int GetMP() { return m_Mp; }
+
     public int GetPower() { return m_Power; }
     public int GetMagic() { return m_Magic; }
 
+    public int GetSpeed() { return m_Speed; }
+
     public string GetName() { return m_Name; }
+
+    public bool IsActed() { return m_Acted; }
+
+    public void Act() { m_Acted = true; }
+
+    public void ActedReset() { m_Acted = false; }
 
     public void Damage(int  damage)
     {
