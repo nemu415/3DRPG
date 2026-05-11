@@ -39,4 +39,16 @@ public class StatusText : MonoBehaviour
         m_StatusText.text = "HP:" + hp.ToString("D2") + "\n"
             + "MP:" + mp.ToString("D2");
     }
+
+    public void Activate()
+    {
+        this.gameObject.SetActive(true);
+    }
+
+    public void Delete()
+    {
+        this.gameObject.SetActive(false);
+    }
 }
+
+

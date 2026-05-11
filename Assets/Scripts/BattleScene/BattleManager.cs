@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Unity.VectorGraphics;
 using System.IO;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class MessageText : MonoBehaviour
 {
@@ -23,9 +24,17 @@ public class MessageText : MonoBehaviour
     [SerializeField]
     private Enemy m_Enemy;
 
+    [SerializeField]
+    private StatusText m_PlayerStatusText;
+
+    [SerializeField]
+    private StatusText m_EnemyStatusText;
+
     List<string[]> TextData = new List<string[]>();
 
     private int m_PlayerAct;
+
+    string m_Times;
 
     private void Start()
     {
@@ -36,11 +45,14 @@ public class MessageText : MonoBehaviour
             string line = reader.ReadLine();
             TextData.Add(line.Split(','));
         }
+
+        m_PlayerStatusText.Activate();
+        m_EnemyStatusText.Activate();
     }
 
     private void Update()
     {
-        string Times = TextData[textNum][0].ToString();
+        m_Times = TextData[textNum][0].ToString();
 
         int playerSpeed = m_Player.GetSpeed();
         int enemySpeed = m_Enemy.GetSpeed();
@@ -48,7 +60,7 @@ public class MessageText : MonoBehaviour
         // バトル開始
         if (textNum == 0)
         {
-            m_MessageText.text = Times;
+            m_MessageText.text = string.Format("{0} が あらわれた！", m_Enemy.GetName());
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -62,7 +74,7 @@ public class MessageText : MonoBehaviour
             m_Player.ActedReset();
             m_Enemy.ActedReset();
 
-            m_MessageText.text = Times;
+            m_MessageText.text = m_Times;
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -73,8 +85,9 @@ public class MessageText : MonoBehaviour
         // 選択肢
         else if (textNum == 2)
         {
-            m_MessageText.text = Times;
+            m_MessageText.text = m_Times;
 
+            // 攻撃
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 m_PlayerAct = 1;
@@ -88,6 +101,7 @@ public class MessageText : MonoBehaviour
                 }
             }
 
+            // 魔法
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {                    
                 m_PlayerAct = 2;
@@ -99,6 +113,17 @@ public class MessageText : MonoBehaviour
                 {
                     textNum = 4;
                 }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                Escape();
+            }
+
+            // 逃げる
+            if (Input.GetKeyDown (KeyCode.Alpha4))
+            {
+                Escape();
             }
         }
 
@@ -146,13 +171,19 @@ public class MessageText : MonoBehaviour
             }
         }
 
+        // プレイヤーの攻撃
         else if (textNum == 5)
         {
             m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Enemy.GetName(), m_Player.GetPower());
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (m_Enemy.IsActed())
+                if (m_Enemy.GetHP() <= 0)
+                {
+                    EnemyDie();
+                }
+
+                else if (m_Enemy.IsActed())
                 {
                     textNum = 1;
                 }
@@ -163,13 +194,19 @@ public class MessageText : MonoBehaviour
             }
         }
 
+        // プレイヤーの魔法
         else if (textNum == 6)
         {
             m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Enemy.GetName(), m_Player.GetMagic());
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (m_Enemy.IsActed())
+                if (m_Enemy.GetHP() <= 0)
+                {
+                    EnemyDie();
+                }
+
+                else if (m_Enemy.IsActed())
                 {
                     textNum = 1;
                 }
@@ -180,13 +217,19 @@ public class MessageText : MonoBehaviour
             }
         }
 
+        // 敵の攻撃
         else if (textNum == 7)
         {
             m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Player.GetName(), m_Enemy.GetPower());
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (m_Player.IsActed())
+                if (m_Player.GetHP() <= 0)
+                {
+                    PlayerDie();
+                }
+
+                else if (m_Player.IsActed())
                 {
                     textNum = 1;
                 }
@@ -197,14 +240,49 @@ public class MessageText : MonoBehaviour
             }
         }
 
-        if (m_Player.GetHP() <= 0)
+        else if (textNum == 8)
+        {
+            m_MessageText.text = string.Format("うまく逃げ切れた！");
+        }
+
+        else if (textNum == 9)
+        {
+            m_MessageText.text = string.Format("逃げられなかった！");
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                textNum = 4;
+            }
+        }
+
+    }
+
+    private void PlayerDie()
+    {
+        m_MessageText.text = string.Format("{0} は 力尽きた…", m_Player.GetName());
+        textNum = 10;
+    }
+
+    private void EnemyDie()
+    {
+        m_MessageText.text = string.Format("{0} を 倒した！", m_Enemy.GetName());
+        textNum = 10;
+    }
+
+    private void Escape()
+    {
+        int border = 50;
+        int rand = Random.Range(1, 100);
+
+        border -= (m_Player.GetSpeed() - m_Enemy.GetSpeed());
+
+        if (rand > border)
         {
             textNum = 8;
         }
-
-        if (m_Enemy.GetHP() <= 0)
+        else
         {
             textNum = 9;
+            m_Player.Act();
         }
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private int m_Hp;
-    private static int m_MaxHp = 100;
+    private static int m_MaxHp = 10;
     private int m_Mp;
     private static int m_MaxMp = 8;
     private int m_Power;
@@ -18,8 +18,6 @@ public class Player : MonoBehaviour
         êÖ,
         óã,
         âÒïú,
-        MAGIC_TYPE_MAX,
-        MAGIC_TYPE_NONE = -1,
     }
 
     public PlayerMagicType m_Type;
@@ -64,6 +62,11 @@ public class Player : MonoBehaviour
     public void Damage(int  damage)
     {
         m_Hp -= damage;
+
+        if (m_Hp < 0)
+        {
+            m_Hp = 0;
+        }
     }
 
     public void Attack()

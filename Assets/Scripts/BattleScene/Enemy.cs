@@ -4,7 +4,7 @@ using static Player;
 public class Enemy : MonoBehaviour
 {
     private int m_Hp;
-    private static int m_MaxHp =70;
+    private static int m_MaxHp =30;
     private int m_Mp;
     private static int m_MaxMp = 60;
     private int m_Power;
@@ -65,6 +65,11 @@ public class Enemy : MonoBehaviour
     public void Damage(int damage)
     {
         m_Hp -= damage;
+
+        if (m_Hp < 0)
+        {
+            m_Hp = 0;
+        }
     }
 
     public void Attack()
