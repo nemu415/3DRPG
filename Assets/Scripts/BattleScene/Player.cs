@@ -3,9 +3,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private int m_Hp;
-    private static int m_MaxHp = 10;
+    private static int m_MaxHp = 100;
     private int m_Mp;
-    private static int m_MaxMp = 8;
+    private static int m_MaxMp = 80;
     private int m_Power;
     private int m_Magic;
     private int m_Speed;
@@ -78,5 +78,25 @@ public class Player : MonoBehaviour
     {
         m_Enemy.Damage(m_Magic);
         m_Mp -= 5;
+    }
+
+    public void HPHeal(int heal)
+    {
+        m_Hp += heal;
+
+        if (m_Hp > m_MaxHp)
+        {
+            m_Hp = m_MaxHp;
+        }
+    }
+
+    public void MPHeal(int heal)
+    {
+        m_Mp += heal;
+
+        if (m_Mp > m_MaxMp)
+        {
+            m_Mp = m_MaxMp;
+        }
     }
 }

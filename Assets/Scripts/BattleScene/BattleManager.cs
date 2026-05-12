@@ -8,7 +8,7 @@ using System.IO;
 using UnityEngine.UI;
 using Unity.VisualScripting;
 
-public class MessageText : MonoBehaviour
+public class BattleManager : MonoBehaviour
 {
     int textNum = 0;
 
@@ -30,9 +30,17 @@ public class MessageText : MonoBehaviour
     [SerializeField]
     private StatusText m_EnemyStatusText;
 
+    [SerializeField]
+    private ItemManager m_ItemManager;
+
+    [SerializeField]
+    private GameObject m_Item;
+
     List<string[]> TextData = new List<string[]>();
 
     private int m_PlayerAct;
+
+    private ItemManager.Itemtype m_ItemType;
 
     string m_Times;
 
@@ -117,13 +125,13 @@ public class MessageText : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                Escape();
+                Item();
             }
 
             // “¦‚°‚é
             if (Input.GetKeyDown (KeyCode.Alpha4))
             {
-                Escape();
+                Escape(50);
             }
         }
 
@@ -254,6 +262,10 @@ public class MessageText : MonoBehaviour
             }
         }
 
+        if (textNum == 11)
+        {
+            Item();
+        }
     }
 
     private void PlayerDie()
@@ -268,9 +280,67 @@ public class MessageText : MonoBehaviour
         textNum = 10;
     }
 
-    private void Escape()
+    private void Item()
     {
-        int border = 50;
+        m_Item.gameObject.SetActive(true);
+
+        textNum = 11;
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            m_ItemType = ItemManager.Itemtype.HP_HEAL;
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            m_ItemType = ItemManager.Itemtype.MP_HEAL;
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            m_ItemType = ItemManager.Itemtype.ESCAPE;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            switch(m_ItemType)
+            {
+                case ItemManager.Itemtype.HP_HEAL:
+                    m_Player.HPHeal(10);
+                    m_ItemManager.SpendItem(ItemManager.Itemtype.HP_HEAL);
+                    m_Player.Act();
+                    textNum = 4;
+                    m_Item.gameObject.SetActive(false);
+                    break;
+                case ItemManager.Itemtype.MP_HEAL:
+                    m_Player.MPHeal(10);
+                    m_ItemManager.SpendItem(ItemManager.Itemtype.MP_HEAL);
+                    m_Player.Act();
+                    textNum = 4;
+                    m_Item.gameObject.SetActive(false);
+                    break;
+                case ItemManager.Itemtype.ESCAPE:
+                    Escape(0);
+                    m_ItemManager.SpendItem(ItemManager.Itemtype.ESCAPE);
+                    m_Item.gameObject.SetActive(false);
+                    break;
+            }
+        }
+
+        if (m_ItemType == 0)
+        {
+            m_MessageText.text = string.Format("HP‚ð10‰ñ•œ");
+        }
+        else if (m_ItemType == ItemManager.Itemtype.MP_HEAL)
+        {
+            m_MessageText.text = string.Format("MP‚ð10‰ñ•œ");
+        }
+        else if (m_ItemType == ItemManager.Itemtype.ESCAPE)
+        {
+            m_MessageText.text = string.Format("ŠmŽÀ‚É“¦‚°‚ç‚ê‚é");
+        }
+    }
+
+    private void Escape(int border)
+    {
         int rand = Random.Range(1, 100);
 
         border -= (m_Player.GetSpeed() - m_Enemy.GetSpeed());

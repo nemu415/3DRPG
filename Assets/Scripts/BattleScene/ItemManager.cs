@@ -1,26 +1,46 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    private enum Itemtype
+    private CanvasGroup m_CanvasGroup;
+
+    [SerializeField]
+    [Multiline(3)]
+    private TextMeshProUGUI m_ItemText;
+
+    public enum Itemtype
     {
         HP_HEAL,
         MP_HEAL,
         ESCAPE,
-        POWER_UP,
     }
 
-    private Itemtype m_Itemtype;
+    public Itemtype m_Itemtype;
 
-    List<Itemtype[]> m_ItemData = new List<Itemtype[]>();
+    private int[] m_ItemNum = { 0, 0, 0};
 
     private void Start()
     {
-        m_ItemData.Add(new Itemtype[] { Itemtype.HP_HEAL });
-        m_ItemData.Add(new Itemtype[] { Itemtype.MP_HEAL });
-        m_ItemData.Add(new Itemtype[] { Itemtype.ESCAPE });
-        m_ItemData.Add(new Itemtype[] { Itemtype.POWER_UP });
+       for (int i = 0; i < m_ItemNum.Length; i++)
+       {
+            m_ItemNum[i] = 5 - i;
+       }
+    }
+
+    private void Update()
+    {
+        m_ItemText.text = string.Format(
+            "1.回復薬　　　　{0}\n" +
+            "2.魔力チャージ　{1}\n" +
+            "3.煙玉　　　　　{2}",
+            m_ItemNum[0], m_ItemNum[1], m_ItemNum[2]);
+    }
+
+    public void SpendItem(Itemtype type)
+    {
+        m_ItemNum[(int)type]--;
     }
 }
