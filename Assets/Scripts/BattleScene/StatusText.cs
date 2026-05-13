@@ -27,16 +27,28 @@ public class StatusText : MonoBehaviour
     {
         if (this.gameObject.name == "PlayerStatus")
         {
-            hp = m_Player.m_Hp;
-            mp = m_Player.m_Mp;
+            hp = m_Player.GetHP();
+            mp = m_Player.GetMP();
         }
         else if (this.gameObject.name == "EnemyStatus")
         {
-            hp = m_Enemy.m_Hp;
-            mp = m_Enemy.m_Mp;
+            hp = m_Enemy.GetHP();
+            mp = m_Enemy.GetMP();
         }
 
         m_StatusText.text = "HP:" + hp.ToString("D2") + "\n"
             + "MP:" + mp.ToString("D2");
     }
+
+    public void Activate()
+    {
+        this.gameObject.SetActive(true);
+    }
+
+    public void Delete()
+    {
+        this.gameObject.SetActive(false);
+    }
 }
+
+
