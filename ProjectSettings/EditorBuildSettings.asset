@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BattleScene.unity
     guid: c718f2df2c87dc74295193631da0acaa
+  - enabled: 1
+    path: Assets/Scenes/SoshiKurosawa.unity
+    guid: 828d7066f39c2524b8ba36d13c2d87c4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0

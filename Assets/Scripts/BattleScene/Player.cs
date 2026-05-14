@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Enemy;
 
 public class Player : MonoBehaviour
 {
@@ -40,6 +41,18 @@ public class Player : MonoBehaviour
     private void Update()
     {
 
+    }
+
+    public void Init()
+    {
+        m_Hp = m_MaxHp;
+        m_Mp = m_MaxMp;
+        m_Power = 7;
+        m_Magic = 2;
+        m_Speed = 8;
+        m_Name = "BlueEnemy";
+        m_Type = PlayerMagicType.‰Š;
+        m_Acted = false;
     }
 
     public int GetHP() { return m_Hp; }

@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     private int m_Speed;
     private static string m_Name;
     private bool m_Acted;
+    private Vector3 m_Pos;
 
     public enum EnemyMagicType
     {
@@ -23,7 +24,20 @@ public class Enemy : MonoBehaviour
         MAGIC_TYPE_NONE = -1,
     }
 
-    public EnemyMagicType m_Type;
+    public enum EnemyType
+    {
+        FIRE,
+        WATER,
+        THUNDER,
+        POWER,
+        SUPPORT,
+        ENEMY_TYPE_MAX,
+        ENEMY_TYPE_NONE = -1
+    }
+
+    public EnemyMagicType m_MagicType;
+    
+    public EnemyType m_EnemyType;
 
     [SerializeField]
     private Player m_Player;
@@ -36,13 +50,27 @@ public class Enemy : MonoBehaviour
         m_Magic = 2;
         m_Speed = 8;
         m_Name = "BlueEnemy";
-        m_Type = EnemyMagicType.êÖ;
+        m_MagicType = EnemyMagicType.êÖ;
+        m_EnemyType = EnemyType.WATER;
         m_Acted = false;
     }
 
     private void Update()
     {
         
+    }
+
+    public void Init()
+    {
+        m_Hp = m_MaxHp;
+        m_Mp = m_MaxMp;
+        m_Power = 7;
+        m_Magic = 2;
+        m_Speed = 8;
+        m_Name = "BlueEnemy";
+        m_MagicType = EnemyMagicType.êÖ;
+        m_EnemyType = EnemyType.WATER;
+        m_Acted = false;
     }
 
     public int GetHP() { return m_Hp; }
@@ -56,11 +84,15 @@ public class Enemy : MonoBehaviour
 
     public string GetName() { return m_Name; }
 
+    public Vector3 GetPos() { return m_Pos; }
+
     public bool IsActed() { return m_Acted; }
 
     public void Act() { m_Acted = true; }
 
     public void ActedReset() { m_Acted = false; }
+
+    public void SetPos(Vector3 pos) { m_Pos = pos; }
 
     public void Damage(int damage)
     {

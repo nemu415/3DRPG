@@ -7,6 +7,7 @@ using Unity.VectorGraphics;
 using System.IO;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
@@ -23,10 +24,13 @@ public class BattleManager : MonoBehaviour
     private Enemy m_Enemy;
 
     [SerializeField]
-    private StatusText m_PlayerStatusText;
+    private MainCamera m_MainCamera;
 
     [SerializeField]
-    private StatusText m_EnemyStatusText;
+    private GameObject m_PlayerStatusText;
+
+    [SerializeField]
+    private GameObject m_EnemyStatusText;
 
     [SerializeField]
     private ItemManager m_ItemManager;
@@ -71,8 +75,31 @@ public class BattleManager : MonoBehaviour
             TextData.Add(line.Split(','));
         }
 
-        m_PlayerStatusText.Activate();
-        m_EnemyStatusText.Activate();
+        Vector3 playerPos = new Vector3(-3.0f, 1.8f, 0.0f);
+
+        Instantiate(m_Player, playerPos, this.transform.rotation);
+
+        Vector3 enemyPos = new Vector3(3.0f, 1.8f, 0.0f);
+
+        int enemyNum = Random.Range(1, 3);
+
+        Debug.Log(enemyNum);
+
+        for (int i = 0; i < enemyNum; i++)
+        {
+            enemyPos.z = -(float)enemyNum + (float)i * 2;
+            Instantiate(m_Enemy, enemyPos, this.transform.rotation);
+        }
+
+        if (m_Player != null)
+        {
+            m_Player.Init();
+        }
+
+        if (m_Enemy != null)
+        {
+            m_Enemy.Init();
+        }
     }
 
     private void Update()
@@ -88,6 +115,9 @@ public class BattleManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     m_TextNum++;
+                    m_MainCamera.BattleStart();
+                    m_PlayerStatusText.gameObject.SetActive(true);
+                    m_EnemyStatusText.gameObject.SetActive(true);
                 }
                 break;
 
@@ -254,8 +284,12 @@ public class BattleManager : MonoBehaviour
                 break;
             case BattleText.ESCAPE_FAILED:
                 m_MessageText.text = string.Format("“¦‚°‚ç‚ê‚È‚©‚Á‚½");
-                m_TextNum = BattleText.ENEMY_ATTACK;
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    m_TextNum = BattleText.ENEMY_ATTACK;
+                }
                 break;
+
             case BattleText.ITEM_HP_HEAL:
                 break;
             case BattleText.ITEM_MP_HEAL:
@@ -263,7 +297,12 @@ public class BattleManager : MonoBehaviour
             case BattleText.ITEM_ESCAPE:
                 break;
             case BattleText.BATTLE_END:
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    SceneManager.LoadScene("SoshiKurosawa");
+                }
                 break;
+
             case BattleText.BATTLE_TEXT_MAX:
                 break;
             default:
