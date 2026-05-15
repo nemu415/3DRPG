@@ -80,7 +80,7 @@ public class BattleManager : MonoBehaviour
         Instantiate(m_Player, playerPos, this.transform.rotation);
 
         Vector3 enemyPos = new Vector3(3.0f, 1.8f, 0.0f);
-        Vector3 enemyTextPos = new Vector3(-300.0f, 170.0f, 0.0f);
+        
 
         int enemyNum = Random.Range(1, 3);
 
@@ -88,7 +88,6 @@ public class BattleManager : MonoBehaviour
         {
             enemyPos.z = -(float)enemyNum + (float)i * 2;
             Instantiate(m_Enemy, enemyPos, this.transform.rotation);
-            Instantiate(m_EnemyStatusText, enemyTextPos, this.transform.rotation);
         }
 
         if (m_Player != null)
@@ -116,8 +115,9 @@ public class BattleManager : MonoBehaviour
                 {
                     m_TextNum++;
                     m_MainCamera.BattleStart();
-                    m_PlayerStatusText.gameObject.SetActive(true);
-                    m_EnemyStatusText.gameObject.SetActive(true);
+                    Vector3 playerTextPos = new Vector3(0.0f, 0.0f, 0.0f);
+                    Instantiate(m_PlayerStatusText, playerTextPos, this.transform.rotation);
+                    Instantiate(m_EnemyStatusText);
                 }
                 break;
 
