@@ -80,15 +80,15 @@ public class BattleManager : MonoBehaviour
         Instantiate(m_Player, playerPos, this.transform.rotation);
 
         Vector3 enemyPos = new Vector3(3.0f, 1.8f, 0.0f);
+        Vector3 enemyTextPos = new Vector3(-300.0f, 170.0f, 0.0f);
 
         int enemyNum = Random.Range(1, 3);
-
-        Debug.Log(enemyNum);
 
         for (int i = 0; i < enemyNum; i++)
         {
             enemyPos.z = -(float)enemyNum + (float)i * 2;
             Instantiate(m_Enemy, enemyPos, this.transform.rotation);
+            Instantiate(m_EnemyStatusText, enemyTextPos, this.transform.rotation);
         }
 
         if (m_Player != null)
