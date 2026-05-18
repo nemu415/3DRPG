@@ -150,6 +150,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ef3389ce1b241243867108cf95b4aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusText
-  m_Player: {fileID: 0}
-  m_Enemy: {fileID: 0}
+  m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
+  m_Enemy: {fileID: 659501412936082241, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
   m_StatusText: {fileID: 6197464136728594858}

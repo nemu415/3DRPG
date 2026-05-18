@@ -8,6 +8,7 @@ using System.IO;
 using UnityEngine.UI;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class BattleManager : MonoBehaviour
 {
@@ -38,9 +39,18 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private GameObject m_Item;
 
+    [SerializeField]
+    private Transform canvasTransform;
+
     List<string[]> TextData = new List<string[]>();
 
+    List<GameObject> EnemyTextList = new List<GameObject>();
+
+    List<IBattleCharacter> CharacterList = new List<IBattleCharacter>();
+
     private int m_PlayerAct;
+
+    private int enemyNum;
 
     private ItemManager.Itemtype m_ItemType;
 
@@ -65,6 +75,12 @@ public class BattleManager : MonoBehaviour
 
     private BattleText m_TextNum;
 
+    public interface IBattleCharacter
+    {
+        string Name { get; }
+        int Speed { get; }
+    }
+
     private void Start()
     {
         StringReader reader = new StringReader(m_BattleText.text);
@@ -77,17 +93,21 @@ public class BattleManager : MonoBehaviour
 
         Vector3 playerPos = new Vector3(-3.0f, 1.8f, 0.0f);
 
-        Instantiate(m_Player, playerPos, this.transform.rotation);
+        Player player = Instantiate(m_Player, playerPos, this.transform.rotation);
+        CharacterList.Add(player);
 
         Vector3 enemyPos = new Vector3(3.0f, 1.8f, 0.0f);
-        
 
-        int enemyNum = Random.Range(1, 3);
+        //enemyNum = Random.Range(1, 3);
+        enemyNum = 2;
+
+        Enemy enemy;
 
         for (int i = 0; i < enemyNum; i++)
         {
             enemyPos.z = -(float)enemyNum + (float)i * 2;
-            Instantiate(m_Enemy, enemyPos, this.transform.rotation);
+            enemy = Instantiate(m_Enemy, enemyPos, this.transform.rotation);
+            CharacterList.Add(enemy);
         }
 
         if (m_Player != null)
@@ -99,13 +119,21 @@ public class BattleManager : MonoBehaviour
         {
             m_Enemy.Init();
         }
+
+        List<IBattleCharacter> Characters = Object.FindObjectsByType<MonoBehaviour>
+            (FindObjectsSortMode.None).OfType<IBattleCharacter>().ToList();
+
+        var turnOrder = Characters.OrderByDescending(c => c.Speed).ToList();
+
+        Debug.Log("çsìÆèá");
+        for (int i = 0; i < turnOrder.Count; i++)
+        {
+            Debug.Log(turnOrder[i].Name);
+        }
     }
 
     private void Update()
     {
-        int playerSpeed = m_Player.GetSpeed();
-        int enemySpeed = m_Enemy.GetSpeed();
-
         switch (m_TextNum)
         {
             case BattleText.BATTLE_START:
@@ -115,9 +143,29 @@ public class BattleManager : MonoBehaviour
                 {
                     m_TextNum++;
                     m_MainCamera.BattleStart();
-                    Vector3 playerTextPos = new Vector3(0.0f, 0.0f, 0.0f);
-                    Instantiate(m_PlayerStatusText, playerTextPos, this.transform.rotation);
-                    Instantiate(m_EnemyStatusText);
+                    Vector3 playerTextPos = new Vector3(-400.0f, 130.0f, 0.0f);
+                    Vector3 enemyTextPos = new Vector3(400.0f, -270.0f, 0.0f);
+
+                    GameObject playerStatusText = Instantiate(m_PlayerStatusText, canvasTransform);
+                    GameObject enemyStatusText;
+
+                    RectTransform rectranceForm = playerStatusText.GetComponent<RectTransform>();
+                    if (rectranceForm != null)
+                    {
+                        rectranceForm.anchoredPosition = playerTextPos;
+                    }
+
+                    for (int i = 0; i < enemyNum; i++)
+                    {
+                        enemyTextPos.x += i * 100.0f;
+                        enemyStatusText = Instantiate(m_EnemyStatusText, canvasTransform);
+                        EnemyTextList.Add(enemyStatusText);
+                        rectranceForm = enemyStatusText.GetComponent<RectTransform>();
+                        if (rectranceForm != null)
+                        {
+                            rectranceForm.anchoredPosition = enemyTextPos;
+                        }
+                    }
                 }
                 break;
 
@@ -131,10 +179,10 @@ public class BattleManager : MonoBehaviour
                     m_Player.GetName());
 
                 // çUåÇ
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                /*if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
                     m_PlayerAct = 1;
-                    if (playerSpeed > enemySpeed)
+                    if (playerSpeed > EnemyList[0].GetSpeed())
                     {
                         m_TextNum = BattleText.PLAYER_ATTACK;
                     }
@@ -156,7 +204,7 @@ public class BattleManager : MonoBehaviour
                     {
                         m_TextNum = BattleText.ENEMY_ATTACK;
                     }
-                }
+                }*/
 
                 if (Input.GetKeyDown(KeyCode.Alpha3))
                 {

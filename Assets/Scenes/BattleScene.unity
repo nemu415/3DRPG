@@ -546,6 +546,7 @@ MonoBehaviour:
   m_EnemyStatusText: {fileID: 7524002618075884998, guid: 8a8148746884d0546b49a01214bae855, type: 3}
   m_ItemManager: {fileID: 872279965}
   m_Item: {fileID: 2066803108}
+  canvasTransform: {fileID: 75159670}
 --- !u!1 &996083219
 GameObject:
   m_ObjectHideFlags: 0
