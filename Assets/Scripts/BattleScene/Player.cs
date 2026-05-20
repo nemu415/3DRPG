@@ -1,6 +1,8 @@
 using UnityEngine;
+using static BattleManager;
+using static Enemy;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IBattleCharacter
 {
     private int m_Hp;
     private static int m_MaxHp = 100;
@@ -11,6 +13,9 @@ public class Player : MonoBehaviour
     private int m_Speed;
     private string m_Name;
     private bool m_Acted;
+
+    public string Name => m_Name;
+    public int Speed => m_Speed;
 
     public enum PlayerMagicType
     {
@@ -40,6 +45,18 @@ public class Player : MonoBehaviour
     private void Update()
     {
 
+    }
+
+    public void Init()
+    {
+        m_Hp = m_MaxHp;
+        m_Mp = m_MaxMp;
+        m_Power = 5;
+        m_Magic = 10;
+        m_Speed = 10;
+        m_Type = PlayerMagicType.‰Š;
+        m_Name = "Player";
+        m_Acted = false;
     }
 
     public int GetHP() { return m_Hp; }

@@ -5,11 +5,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine.UI;
+<<<<<<< HEAD
+=======
+using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
+using System.Linq;
+>>>>>>> c57aa08900a1ca17cd9de2387b13973f00aa39b7
 
 public class BattleManager : MonoBehaviour
 {
-    int textNum = 0;
-
     [SerializeField]
     private TextMeshProUGUI m_MessageText;
 
@@ -23,10 +27,13 @@ public class BattleManager : MonoBehaviour
     private Enemy m_Enemy;
 
     [SerializeField]
-    private StatusText m_PlayerStatusText;
+    private MainCamera m_MainCamera;
 
     [SerializeField]
-    private StatusText m_EnemyStatusText;
+    private GameObject m_PlayerStatusText;
+
+    [SerializeField]
+    private GameObject m_EnemyStatusText;
 
     [SerializeField]
     private ItemManager m_ItemManager;
@@ -34,13 +41,47 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private GameObject m_Item;
 
+    [SerializeField]
+    private Transform canvasTransform;
+
     List<string[]> TextData = new List<string[]>();
+
+    List<GameObject> EnemyTextList = new List<GameObject>();
+
+    List<IBattleCharacter> CharacterList = new List<IBattleCharacter>();
 
     private int m_PlayerAct;
 
+    private int enemyNum;
+
     private ItemManager.Itemtype m_ItemType;
 
-    string m_Times;
+    private enum BattleText
+    {
+        BATTLE_START,
+        CHOOSE_ACTION,
+        PLAYER_ATTACK,
+        ENEMY_ATTACK,
+        PLAYER_ATTACK_DAMAGE,
+        PLAYER_MAGIC_DAMAGE,
+        ENEMY_ATTACK_DAMAGE,
+        ITEM,
+        ESCAPE_SUCCESS,
+        ESCAPE_FAILED,
+        ITEM_HP_HEAL,
+        ITEM_MP_HEAL,
+        ITEM_ESCAPE,
+        BATTLE_END,
+        BATTLE_TEXT_MAX
+    }
+
+    private BattleText m_TextNum;
+
+    public interface IBattleCharacter
+    {
+        string Name { get; }
+        int Speed { get; }
+    }
 
     private void Start()
     {
@@ -52,215 +93,273 @@ public class BattleManager : MonoBehaviour
             TextData.Add(line.Split(','));
         }
 
-        m_PlayerStatusText.Activate();
-        m_EnemyStatusText.Activate();
+        Vector3 playerPos = new Vector3(-3.0f, 1.8f, 0.0f);
+
+        Player player = Instantiate(m_Player, playerPos, this.transform.rotation);
+        CharacterList.Add(player);
+
+        Vector3 enemyPos = new Vector3(3.0f, 1.8f, 0.0f);
+
+        //enemyNum = Random.Range(1, 3);
+        enemyNum = 2;
+
+        Enemy enemy;
+
+        for (int i = 0; i < enemyNum; i++)
+        {
+            enemyPos.z = -(float)enemyNum + (float)i * 2;
+            enemy = Instantiate(m_Enemy, enemyPos, this.transform.rotation);
+            CharacterList.Add(enemy);
+        }
+
+        if (m_Player != null)
+        {
+            m_Player.Init();
+        }
+
+        if (m_Enemy != null)
+        {
+            m_Enemy.Init();
+        }
+
+        List<IBattleCharacter> Characters = Object.FindObjectsByType<MonoBehaviour>
+            (FindObjectsSortMode.None).OfType<IBattleCharacter>().ToList();
+
+        var turnOrder = Characters.OrderByDescending(c => c.Speed).ToList();
+
+        Debug.Log("行動順");
+        for (int i = 0; i < turnOrder.Count; i++)
+        {
+            Debug.Log(turnOrder[i].Name);
+        }
     }
 
     private void Update()
     {
-        m_Times = TextData[textNum][0].ToString();
-
-        int playerSpeed = m_Player.GetSpeed();
-        int enemySpeed = m_Enemy.GetSpeed();
-
-        // バトル開始
-        if (textNum == 0)
+        switch (m_TextNum)
         {
-            m_MessageText.text = string.Format("{0} が あらわれた！", m_Enemy.GetName());
+            case BattleText.BATTLE_START:
+                m_MessageText.text = string.Format("{0} が あらわれた！", m_Enemy.GetName());
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                textNum++;
-            }
-        }
-
-        // Playerはどうする？
-        else if (textNum == 1)
-        {
-            m_Player.ActedReset();
-            m_Enemy.ActedReset();
-
-            m_MessageText.text = m_Times;
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                textNum++;
-            }
-        }
-
-        // 選択肢
-        else if (textNum == 2)
-        {
-            m_MessageText.text = m_Times;
-
-            // 攻撃
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                m_PlayerAct = 1;
-                if (playerSpeed > enemySpeed)
-                {
-                    textNum = 3;
-                }
-                else
-                {
-                    textNum = 4;
-                }
-            }
-
-            // 魔法
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {                    
-                m_PlayerAct = 2;
-                if (playerSpeed > enemySpeed)
-                {
-                    textNum = 3;
-                }
-                else
-                {
-                    textNum = 4;
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                Item();
-            }
-
-            // 逃げる
-            if (Input.GetKeyDown (KeyCode.Alpha4))
-            {
-                Escape(50);
-            }
-        }
-
-        // 各キャラクター行動
-        else if (textNum == 3)
-        {
-            if (m_PlayerAct == 1)
-            {
-                m_MessageText.text = string.Format("Playerの攻撃！");
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    m_Player.Attack();
-                    m_Player.Act();
-                    textNum = 5;
-                }
-            }
-            else if (m_PlayerAct == 2)
-            {
-                if (m_Player.GetMP() > 5)
-                {
-                    m_MessageText.text = string.Format("Playerの{0}魔法！", m_Player.m_Type);
-                    if (Input.GetKeyDown(KeyCode.Space))
+                    m_TextNum++;
+                    m_MainCamera.BattleStart();
+                    Vector3 playerTextPos = new Vector3(-400.0f, 130.0f, 0.0f);
+                    Vector3 enemyTextPos = new Vector3(400.0f, -270.0f, 0.0f);
+
+                    GameObject playerStatusText = Instantiate(m_PlayerStatusText, canvasTransform);
+                    GameObject enemyStatusText;
+
+                    RectTransform rectranceForm = playerStatusText.GetComponent<RectTransform>();
+                    if (rectranceForm != null)
                     {
-                        m_Player.Magic();
-                        m_Player.Act();
-                        textNum = 6;
+                        rectranceForm.anchoredPosition = playerTextPos;
+                    }
+
+                    for (int i = 0; i < enemyNum; i++)
+                    {
+                        enemyTextPos.x += i * 100.0f;
+                        enemyStatusText = Instantiate(m_EnemyStatusText, canvasTransform);
+                        EnemyTextList.Add(enemyStatusText);
+                        rectranceForm = enemyStatusText.GetComponent<RectTransform>();
+                        if (rectranceForm != null)
+                        {
+                            rectranceForm.anchoredPosition = enemyTextPos;
+                        }
                     }
                 }
-                else
+                break;
+
+            case BattleText.CHOOSE_ACTION:
+                m_Player.ActedReset();
+                m_Enemy.ActedReset();
+
+                m_MessageText.text = string.Format(
+                    "{0} は どうする？\n" +
+                    "1:攻撃 2:魔法 3:アイテム 4:逃げる",
+                    m_Player.GetName());
+
+                // 攻撃
+                /*if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    m_MessageText.text = string.Format("MPが足りない！");
-                    if (Input.GetKeyDown(KeyCode.Space)) textNum = 2;
+                    m_PlayerAct = 1;
+                    if (playerSpeed > EnemyList[0].GetSpeed())
+                    {
+                        m_TextNum = BattleText.PLAYER_ATTACK;
+                    }
+                    else
+                    {
+                        m_TextNum = BattleText.ENEMY_ATTACK;
+                    }
                 }
-            }
+
+                // 魔法
+                if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    m_PlayerAct = 2;
+                    if (playerSpeed > enemySpeed)
+                    {
+                        m_TextNum = BattleText.PLAYER_ATTACK;
+                    }
+                    else
+                    {
+                        m_TextNum = BattleText.ENEMY_ATTACK;
+                    }
+                }*/
+
+                if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    m_TextNum = BattleText.ITEM;
+                }
+
+                // 逃げる
+                if (Input.GetKeyDown(KeyCode.Alpha4))
+                {
+                    Escape(50);
+                }
+                break;
+
+            case BattleText.PLAYER_ATTACK:
+                if (m_PlayerAct == 1)
+                {
+                    m_MessageText.text = string.Format("Playerの攻撃！");
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        m_Player.Attack();
+                        m_Player.Act();
+                        m_TextNum = BattleText.PLAYER_ATTACK_DAMAGE;
+                    }
+                }
+                else if (m_PlayerAct == 2)
+                {
+                    if (m_Player.GetMP() > 5)
+                    {
+                        m_MessageText.text = string.Format("Playerの{0}魔法！", m_Player.m_Type);
+                        if (Input.GetKeyDown(KeyCode.Space))
+                        {
+                            m_Player.Magic();
+                            m_Player.Act();
+                            m_TextNum = BattleText.PLAYER_MAGIC_DAMAGE;
+                        }
+                    }
+                    else
+                    {
+                        m_MessageText.text = string.Format("MPが足りない！");
+                        if (Input.GetKeyDown(KeyCode.Space)) m_TextNum = BattleText.CHOOSE_ACTION;
+                    }
+                }
+                break;
+
+            case BattleText.ENEMY_ATTACK:
+                m_MessageText.text = string.Format("Enemyの攻撃！");
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    m_Enemy.Attack();
+                    m_Enemy.Act();
+                    m_TextNum = BattleText.ENEMY_ATTACK_DAMAGE;
+                }
+                break;
+
+            case BattleText.PLAYER_ATTACK_DAMAGE:
+                m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Enemy.GetName(), m_Player.GetPower());
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    if (m_Enemy.GetHP() <= 0)
+                    {
+                        EnemyDie();
+                    }
+
+                    else if (m_Enemy.IsActed())
+                    {
+                        m_TextNum = BattleText.CHOOSE_ACTION;
+                    }
+                    else
+                    {
+                        m_TextNum = BattleText.ENEMY_ATTACK;
+                    }
+                }
+                break;
+
+            case BattleText.PLAYER_MAGIC_DAMAGE:
+                m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Enemy.GetName(), m_Player.GetMagic());
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    if (m_Enemy.GetHP() <= 0)
+                    {
+                        EnemyDie();
+                    }
+
+                    else if (m_Enemy.IsActed())
+                    {
+                        m_TextNum = BattleText.CHOOSE_ACTION;
+                    }
+                    else
+                    {
+                        m_TextNum = BattleText.ENEMY_ATTACK;
+                    }
+                }
+                break;
+
+            case BattleText.ENEMY_ATTACK_DAMAGE:
+                m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Player.GetName(), m_Enemy.GetPower());
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    if (m_Player.GetHP() <= 0)
+                    {
+                        PlayerDie();
+                    }
+
+                    else if (m_Enemy.IsActed())
+                    {
+                        m_TextNum = BattleText.CHOOSE_ACTION;
+                    }
+                    else
+                    {
+                        m_TextNum = BattleText.PLAYER_ATTACK;
+                    }
+                }
+                break;
+
+            case BattleText.ITEM:
+                Item();
+                break;
+
+            case BattleText.ESCAPE_SUCCESS:
+                m_MessageText.text = string.Format("うまく逃げ切れた");
+                m_TextNum = BattleText.BATTLE_END;
+                break;
+            case BattleText.ESCAPE_FAILED:
+                m_MessageText.text = string.Format("逃げられなかった");
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    m_TextNum = BattleText.ENEMY_ATTACK;
+                }
+                break;
+
+            case BattleText.ITEM_HP_HEAL:
+                break;
+            case BattleText.ITEM_MP_HEAL:
+                break;
+            case BattleText.ITEM_ESCAPE:
+                break;
+            case BattleText.BATTLE_END:
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    SceneManager.LoadScene("SoshiKurosawa");
+                }
+                break;
+
+            case BattleText.BATTLE_TEXT_MAX:
+                break;
+            default:
+                break;
         }
 
-        else if (textNum == 4)
-        {
-            m_MessageText.text = string.Format("Enemyの攻撃！");
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                m_Enemy.Attack();
-                m_Enemy.Act();
-                textNum = 7;
-            }
-        }
-
-        // プレイヤーの攻撃
-        else if (textNum == 5)
-        {
-            m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Enemy.GetName(), m_Player.GetPower());
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (m_Enemy.GetHP() <= 0)
-                {
-                    EnemyDie();
-                }
-
-                else if (m_Enemy.IsActed())
-                {
-                    textNum = 1;
-                }
-                else
-                {
-                    textNum = 4;
-                }
-            }
-        }
-
-        // プレイヤーの魔法
-        else if (textNum == 6)
-        {
-            m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Enemy.GetName(), m_Player.GetMagic());
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (m_Enemy.GetHP() <= 0)
-                {
-                    EnemyDie();
-                }
-
-                else if (m_Enemy.IsActed())
-                {
-                    textNum = 1;
-                }
-                else
-                {
-                    textNum = 4;
-                }
-            }
-        }
-
-        // 敵の攻撃
-        else if (textNum == 7)
-        {
-            m_MessageText.text = string.Format("{0}に{1}ダメージ!", m_Player.GetName(), m_Enemy.GetPower());
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (m_Player.GetHP() <= 0)
-                {
-                    PlayerDie();
-                }
-
-                else if (m_Player.IsActed())
-                {
-                    textNum = 1;
-                }
-                else
-                {
-                    textNum = 3;
-                }
-            }
-        }
-
-        else if (textNum == 8)
-        {
-            m_MessageText.text = string.Format("うまく逃げ切れた！");
-        }
-
-        else if (textNum == 9)
-        {
-            m_MessageText.text = string.Format("逃げられなかった！");
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                textNum = 4;
-            }
-        }
-
-        if (textNum == 11)
+        if (m_TextNum == BattleText.ITEM)
         {
             Item();
         }
@@ -269,20 +368,18 @@ public class BattleManager : MonoBehaviour
     private void PlayerDie()
     {
         m_MessageText.text = string.Format("{0} は 力尽きた…", m_Player.GetName());
-        textNum = 10;
+        m_TextNum = BattleText.BATTLE_END;
     }
 
     private void EnemyDie()
     {
         m_MessageText.text = string.Format("{0} を 倒した！", m_Enemy.GetName());
-        textNum = 10;
+        m_TextNum = BattleText.BATTLE_END;
     }
 
     private void Item()
     {
         m_Item.gameObject.SetActive(true);
-
-        textNum = 11;
 
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -305,14 +402,14 @@ public class BattleManager : MonoBehaviour
                     m_Player.HPHeal(10);
                     m_ItemManager.SpendItem(ItemManager.Itemtype.HP_HEAL);
                     m_Player.Act();
-                    textNum = 4;
+                    m_TextNum = BattleText.ENEMY_ATTACK;
                     m_Item.gameObject.SetActive(false);
                     break;
                 case ItemManager.Itemtype.MP_HEAL:
                     m_Player.MPHeal(10);
                     m_ItemManager.SpendItem(ItemManager.Itemtype.MP_HEAL);
                     m_Player.Act();
-                    textNum = 4;
+                    m_TextNum = BattleText.ENEMY_ATTACK;
                     m_Item.gameObject.SetActive(false);
                     break;
                 case ItemManager.Itemtype.ESCAPE:
@@ -345,11 +442,11 @@ public class BattleManager : MonoBehaviour
 
         if (rand > border)
         {
-            textNum = 8;
+            m_TextNum = BattleText.ESCAPE_SUCCESS;
         }
         else
         {
-            textNum = 9;
+            m_TextNum = BattleText.ESCAPE_FAILED;
             m_Player.Act();
         }
     }
