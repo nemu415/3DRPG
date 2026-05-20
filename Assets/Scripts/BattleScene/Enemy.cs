@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using static BattleManager;
 using static Player;
@@ -117,5 +118,12 @@ public class Enemy : MonoBehaviour, IBattleCharacter
     {
         m_Player.Damage(m_Magic);
         m_Mp -= 5;
+    }
+
+    public async Task TakeTurn()
+    {
+        await Task.Delay(1000);
+
+        Debug.Log("“G‚ÌUŒ‚");
     }
 }

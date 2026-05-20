@@ -534,10 +534,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 972025030}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cef8eb8a7fc7f747a9cd00e1d662f05, type: 3}
+  m_Script: {fileID: 11500000, guid: 018ea8c4099750e44b1d895e64855f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MessageText
   m_MessageText: {fileID: 972025032}
+  m_BattleText: {fileID: 4900000, guid: a109056d098234a40878f4b132083d52, type: 3}
+  m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
+  m_Enemy: {fileID: 659501412936082241, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
+  m_MainCamera: {fileID: 6544191410174298818}
+  m_PlayerStatusText: {fileID: 81620529600061727, guid: 3f8f4bd72bf34814a94949fc42f8b4c6, type: 3}
+  m_EnemyStatusText: {fileID: 7524002618075884998, guid: 8a8148746884d0546b49a01214bae855, type: 3}
+  m_ItemManager: {fileID: 872279965}
+  m_Item: {fileID: 2066803108}
+  canvasTransform: {fileID: 75159670}
 --- !u!1 &996083219
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,8 +1162,8 @@ GameObject:
   - component: {fileID: 3016346963601244091}
   - component: {fileID: 5756828267527402519}
   - component: {fileID: 6544191410174298816}
+  - component: {fileID: 6544191410174298817}
   - component: {fileID: 6544191410174298818}
-  - component: {fileID: 6544191410174298819}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1170,6 +1179,19 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6303947218031592677}
   m_Enabled: 1
+--- !u!114 &6544191410174298817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303947218031592677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16dc6d32871ecdd4d9a071dab28223b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ManagerStarter
+  m_BattleManager: {fileID: 1917651205}
 --- !u!114 &6544191410174298818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1182,28 +1204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79580593c0525dd4b983768f3b3e4d8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainCamera
---- !u!114 &6544191410174298819
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6303947218031592677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 018ea8c4099750e44b1d895e64855f54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BattleManager
-  m_MessageText: {fileID: 972025034}
-  m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
-  m_Enemy: {fileID: 659501412936082241, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
-  m_MainCamera: {fileID: 6544191410174298818}
-  m_PlayerStatusText: {fileID: 81620529600061727, guid: 3f8f4bd72bf34814a94949fc42f8b4c6, type: 3}
-  m_EnemyStatusText: {fileID: 7524002618075884998, guid: 8a8148746884d0546b49a01214bae855, type: 3}
-  m_ItemManager: {fileID: 872279965}
-  m_Item: {fileID: 2066803108}
-  m_Message: {fileID: 1917651205}
-  canvasTransform: {fileID: 75159670}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
