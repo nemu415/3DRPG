@@ -12,7 +12,7 @@ public class Dice : MonoBehaviour
     public int RollMultiple(int diceCount)
     {
         int total = 0;
-
+        
         for (int i = 0; i < diceCount; i++)
         {
             total += Roll();

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using static BattleManager;
 using static Enemy;
@@ -115,5 +116,12 @@ public class Player : MonoBehaviour, IBattleCharacter
         {
             m_Mp = m_MaxMp;
         }
+    }
+
+    public async Task TakeTurn()
+    {
+        await Task.Delay(1000);
+
+        Debug.Log("ƒvƒŒƒCƒ„[‚ÌUŒ‚");
     }
 }
