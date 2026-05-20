@@ -3,10 +3,8 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VectorGraphics;
 using System.IO;
 using UnityEngine.UI;
-using Unity.VisualScripting;
 
 public class BattleManager : MonoBehaviour
 {

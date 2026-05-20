@@ -2,15 +2,22 @@ using UnityEngine;
 
 public class Dice : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    // 16–Êƒ_ƒCƒX‚ğ1‰ñU‚é
+    public int Roll()
     {
-        
+        return Random.Range(1, 17);
     }
 
-    // Update is called once per frame
-    void Update()
+    // nŒÂU‚é
+    public int RollMultiple(int diceCount)
     {
-        
+        int total = 0;
+
+        for (int i = 0; i < diceCount; i++)
+        {
+            total += Roll();
+        }
+
+        return total;
     }
 }
