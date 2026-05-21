@@ -5,16 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine.UI;
-<<<<<<< HEAD
-=======
-using Unity.VisualScripting;
-using UnityEngine.SceneManagement;
-using System.Linq;
-<<<<<<< HEAD
->>>>>>> c57aa08900a1ca17cd9de2387b13973f00aa39b7
-=======
 using System.Threading.Tasks;
->>>>>>> 2cf0d07640f0aef52d6e56528280e30b7ef5836d
+using System.Linq;
 
 public class BattleManager : MonoBehaviour
 {
