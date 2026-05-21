@@ -77,7 +77,7 @@ public class Player : MonoBehaviour, IBattleCharacter
 
     public void ActedReset() { m_Acted = false; }
 
-    public void Damage(int  damage)
+    public void Damage(int damage)
     {
         m_Hp -= damage;
 

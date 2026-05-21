@@ -5,16 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine.UI;
-<<<<<<< HEAD
-=======
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using System.Linq;
-<<<<<<< HEAD
->>>>>>> c57aa08900a1ca17cd9de2387b13973f00aa39b7
-=======
 using System.Threading.Tasks;
->>>>>>> 2cf0d07640f0aef52d6e56528280e30b7ef5836d
 
 public class BattleManager : MonoBehaviour
 {
@@ -209,201 +203,201 @@ public class BattleManager : MonoBehaviour
         Debug.Log("全員のターン終了");
     }
 
-        /*if (m_PlayerAct == 1)
+    /*if (m_PlayerAct == 1)
+    {
+        m_MessageText.SetText("Playerの攻撃！");
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            m_MessageText.SetText("Playerの攻撃！");
+            m_Player.Attack();
+            m_Player.Act();
+            m_TextNum = BattleText.PLAYER_ATTACK_DAMAGE;
+        }
+    }
+    else if (m_PlayerAct == 2)
+    {
+        if (m_Player.GetMP() > 5)
+        {
+            m_MessageText.SetText("Playerの{0}魔法！");
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                m_Player.Attack();
+                m_Player.Magic();
                 m_Player.Act();
-                m_TextNum = BattleText.PLAYER_ATTACK_DAMAGE;
+                m_TextNum = BattleText.PLAYER_MAGIC_DAMAGE;
             }
-        }
-        else if (m_PlayerAct == 2)
-        {
-            if (m_Player.GetMP() > 5)
-            {
-                m_MessageText.SetText("Playerの{0}魔法！");
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    m_Player.Magic();
-                    m_Player.Act();
-                    m_TextNum = BattleText.PLAYER_MAGIC_DAMAGE;
-                }
-            }
-            else
-            {
-                m_MessageText.SetText("MPが足りない！");
-                if (Input.GetKeyDown(KeyCode.Space)) m_TextNum = BattleText.CHOOSE_ACTION;
-            }
-        }
-
-        m_MessageText.SetText("Enemyの攻撃！");
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            m_Enemy.Attack();
-            m_Enemy.Act();
-            m_TextNum = BattleText.ENEMY_ATTACK_DAMAGE;
-        }
-
-        m_MessageText.SetText("{0}に{1}ダメージ!", m_Enemy.GetName());
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (m_Enemy.GetHP() <= 0)
-            {
-                EnemyDie();
-            }
-
-            else if (m_Enemy.IsActed())
-            {
-                m_TextNum = BattleText.CHOOSE_ACTION;
-            }
-            else
-            {
-                m_TextNum = BattleText.ENEMY_ATTACK;
-            }
-        }
-
-        m_MessageText.SetText("{0}に{1}ダメージ!", m_Enemy.GetName());
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (m_Enemy.GetHP() <= 0)
-            {
-                EnemyDie();
-            }
-
-            else if (m_Enemy.IsActed())
-            {
-                m_TextNum = BattleText.CHOOSE_ACTION;
-            }
-            else
-            {
-                m_TextNum = BattleText.ENEMY_ATTACK;
-            }
-        }
-
-        m_MessageText.SetText("{0}に{1}ダメージ!", m_Player.GetName());
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (m_Player.GetHP() <= 0)
-            {
-                PlayerDie();
-            }
-
-            else if (m_Enemy.IsActed())
-            {
-                m_TextNum = BattleText.CHOOSE_ACTION;
-            }
-            else
-            {
-                m_TextNum = BattleText.PLAYER_ATTACK;
-            }
-        }
-
-        Item();
-
-        m_MessageText.SetText("うまく逃げ切れた");
-        m_TextNum = BattleText.BATTLE_END;
-
-        m_MessageText.SetText("逃げられなかった");
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            m_TextNum = BattleText.ENEMY_ATTACK;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SceneManager.LoadScene("SoshiKurosawa");
-        }
-
-    }
-
-    private void PlayerDie()
-    {
-        m_MessageText.SetText("{0} は 力尽きた…", m_Player.GetName());
-        m_TextNum = BattleText.BATTLE_END;
-    }
-
-    private void EnemyDie()
-    {
-        m_MessageText.SetText("{0} を 倒した！", m_Enemy.GetName());
-        m_TextNum = BattleText.BATTLE_END;
-    }
-
-    private void Item()
-    {
-        m_Item.gameObject.SetActive(true);
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            m_ItemType = ItemManager.Itemtype.HP_HEAL;
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            m_ItemType = ItemManager.Itemtype.MP_HEAL;
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            m_ItemType = ItemManager.Itemtype.ESCAPE;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            switch(m_ItemType)
-            {
-                case ItemManager.Itemtype.HP_HEAL:
-                    m_Player.HPHeal(10);
-                    m_ItemManager.SpendItem(ItemManager.Itemtype.HP_HEAL);
-                    m_Player.Act();
-                    m_TextNum = BattleText.ENEMY_ATTACK;
-                    m_Item.gameObject.SetActive(false);
-                    break;
-                case ItemManager.Itemtype.MP_HEAL:
-                    m_Player.MPHeal(10);
-                    m_ItemManager.SpendItem(ItemManager.Itemtype.MP_HEAL);
-                    m_Player.Act();
-                    m_TextNum = BattleText.ENEMY_ATTACK;
-                    m_Item.gameObject.SetActive(false);
-                    break;
-                case ItemManager.Itemtype.ESCAPE:
-                    Escape(0);
-                    m_ItemManager.SpendItem(ItemManager.Itemtype.ESCAPE);
-                    m_Item.gameObject.SetActive(false);
-                    break;
-            }
-        }
-
-        if (m_ItemType == 0)
-        {
-            m_MessageText.SetText("HPを10回復");
-        }
-        else if (m_ItemType == ItemManager.Itemtype.MP_HEAL)
-        {
-            m_MessageText.SetText("MPを10回復");
-        }
-        else if (m_ItemType == ItemManager.Itemtype.ESCAPE)
-        {
-            m_MessageText.SetText("確実に逃げられる");
-        }
-    }
-
-    private void Escape(int border)
-    {
-        int rand = Random.Range(1, 100);
-
-        border -= (m_Player.GetSpeed() - m_Enemy.GetSpeed());
-
-        if (rand > border)
-        {
-            m_TextNum = BattleText.ESCAPE_SUCCESS;
         }
         else
         {
-            m_TextNum = BattleText.ESCAPE_FAILED;
-            m_Player.Act();
+            m_MessageText.SetText("MPが足りない！");
+            if (Input.GetKeyDown(KeyCode.Space)) m_TextNum = BattleText.CHOOSE_ACTION;
         }
-    }*/
+    }
+
+    m_MessageText.SetText("Enemyの攻撃！");
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        m_Enemy.Attack();
+        m_Enemy.Act();
+        m_TextNum = BattleText.ENEMY_ATTACK_DAMAGE;
+    }
+
+    m_MessageText.SetText("{0}に{1}ダメージ!", m_Enemy.GetName());
+
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        if (m_Enemy.GetHP() <= 0)
+        {
+            EnemyDie();
+        }
+
+        else if (m_Enemy.IsActed())
+        {
+            m_TextNum = BattleText.CHOOSE_ACTION;
+        }
+        else
+        {
+            m_TextNum = BattleText.ENEMY_ATTACK;
+        }
+    }
+
+    m_MessageText.SetText("{0}に{1}ダメージ!", m_Enemy.GetName());
+
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        if (m_Enemy.GetHP() <= 0)
+        {
+            EnemyDie();
+        }
+
+        else if (m_Enemy.IsActed())
+        {
+            m_TextNum = BattleText.CHOOSE_ACTION;
+        }
+        else
+        {
+            m_TextNum = BattleText.ENEMY_ATTACK;
+        }
+    }
+
+    m_MessageText.SetText("{0}に{1}ダメージ!", m_Player.GetName());
+
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        if (m_Player.GetHP() <= 0)
+        {
+            PlayerDie();
+        }
+
+        else if (m_Enemy.IsActed())
+        {
+            m_TextNum = BattleText.CHOOSE_ACTION;
+        }
+        else
+        {
+            m_TextNum = BattleText.PLAYER_ATTACK;
+        }
+    }
+
+    Item();
+
+    m_MessageText.SetText("うまく逃げ切れた");
+    m_TextNum = BattleText.BATTLE_END;
+
+    m_MessageText.SetText("逃げられなかった");
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        m_TextNum = BattleText.ENEMY_ATTACK;
+    }
+
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        SceneManager.LoadScene("SoshiKurosawa");
+    }
+
+}
+
+private void PlayerDie()
+{
+    m_MessageText.SetText("{0} は 力尽きた…", m_Player.GetName());
+    m_TextNum = BattleText.BATTLE_END;
+}
+
+private void EnemyDie()
+{
+    m_MessageText.SetText("{0} を 倒した！", m_Enemy.GetName());
+    m_TextNum = BattleText.BATTLE_END;
+}
+
+private void Item()
+{
+    m_Item.gameObject.SetActive(true);
+
+    if (Input.GetKeyDown(KeyCode.A))
+    {
+        m_ItemType = ItemManager.Itemtype.HP_HEAL;
+    }
+    if (Input.GetKeyDown(KeyCode.S))
+    {
+        m_ItemType = ItemManager.Itemtype.MP_HEAL;
+    }
+    if (Input.GetKeyDown(KeyCode.D))
+    {
+        m_ItemType = ItemManager.Itemtype.ESCAPE;
+    }
+
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        switch(m_ItemType)
+        {
+            case ItemManager.Itemtype.HP_HEAL:
+                m_Player.HPHeal(10);
+                m_ItemManager.SpendItem(ItemManager.Itemtype.HP_HEAL);
+                m_Player.Act();
+                m_TextNum = BattleText.ENEMY_ATTACK;
+                m_Item.gameObject.SetActive(false);
+                break;
+            case ItemManager.Itemtype.MP_HEAL:
+                m_Player.MPHeal(10);
+                m_ItemManager.SpendItem(ItemManager.Itemtype.MP_HEAL);
+                m_Player.Act();
+                m_TextNum = BattleText.ENEMY_ATTACK;
+                m_Item.gameObject.SetActive(false);
+                break;
+            case ItemManager.Itemtype.ESCAPE:
+                Escape(0);
+                m_ItemManager.SpendItem(ItemManager.Itemtype.ESCAPE);
+                m_Item.gameObject.SetActive(false);
+                break;
+        }
+    }
+
+    if (m_ItemType == 0)
+    {
+        m_MessageText.SetText("HPを10回復");
+    }
+    else if (m_ItemType == ItemManager.Itemtype.MP_HEAL)
+    {
+        m_MessageText.SetText("MPを10回復");
+    }
+    else if (m_ItemType == ItemManager.Itemtype.ESCAPE)
+    {
+        m_MessageText.SetText("確実に逃げられる");
+    }
+}
+
+private void Escape(int border)
+{
+    int rand = Random.Range(1, 100);
+
+    border -= (m_Player.GetSpeed() - m_Enemy.GetSpeed());
+
+    if (rand > border)
+    {
+        m_TextNum = BattleText.ESCAPE_SUCCESS;
+    }
+    else
+    {
+        m_TextNum = BattleText.ESCAPE_FAILED;
+        m_Player.Act();
+    }
+}*/
 }
