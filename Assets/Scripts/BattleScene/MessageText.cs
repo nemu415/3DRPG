@@ -21,8 +21,8 @@ public class MessageText : MonoBehaviour
         m_MessageText.text = text;
     }
 
-    public void SetText(string text, string name)
+    public void AddText(string text)
     {
-        m_MessageText.text = text;
+        m_MessageText.text += text;
     }
 }
