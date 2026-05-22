@@ -11,8 +11,8 @@ public class StatusText : MonoBehaviour
     [SerializeField]
     private Player m_Player;
 
-    [SerializeField]
-    private Enemy m_Enemy;
+    //[SerializeField]
+    //private Enemy m_Enemy;
 
     [SerializeField]
     private TextMeshProUGUI m_StatusText;
@@ -32,8 +32,8 @@ public class StatusText : MonoBehaviour
         }
         else if (this.gameObject.name == "EnemyStatus")
         {
-            hp = m_Enemy.GetHP();
-            mp = m_Enemy.GetMP();
+            //hp = m_Enemy.GetHP();
+            //mp = m_Enemy.GetMP();
         }
 
         m_StatusText.text = "HP:" + hp.ToString("D2") + "\n"

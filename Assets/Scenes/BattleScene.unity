@@ -1155,6 +1155,7 @@ GameObject:
   - component: {fileID: 6544191410174298816}
   - component: {fileID: 6544191410174298817}
   - component: {fileID: 6544191410174298818}
+  - component: {fileID: 6544191410174298819}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1184,7 +1185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ManagerStarter
   m_MessageText: {fileID: 972025034}
   m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
-  m_Enemy: {fileID: 659501412936082241, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
+  m_CharacterManager: {fileID: 6544191410174298819}
   m_MainCamera: {fileID: 6544191410174298818}
   m_PlayerStatusText: {fileID: 81620529600061727, guid: 3f8f4bd72bf34814a94949fc42f8b4c6, type: 3}
   m_EnemyStatusText: {fileID: 7524002618075884998, guid: 8a8148746884d0546b49a01214bae855, type: 3}
@@ -1204,6 +1205,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79580593c0525dd4b983768f3b3e4d8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainCamera
+--- !u!114 &6544191410174298819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303947218031592677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06efa939bb73d754cbf70fda2dcc4128, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
+  m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
+  m_RedEnemy: {fileID: 3644396506442443258, guid: d11b316eb2dfd84489b448733c183b85, type: 3}
+  m_YellowEnemy: {fileID: 7096615590219139109, guid: fca6dae12bd780c40a026f9bab6ec693, type: 3}
+  m_BlueEnemy: {fileID: 7005002337597356471, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

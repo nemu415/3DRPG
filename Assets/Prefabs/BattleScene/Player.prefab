@@ -298,7 +298,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0090018402e6c884eb5cfe11d421e668, type: 2}
+  - {fileID: 2100000, guid: f54f5db0b3f3df7489715e80a3ffdab2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -358,4 +358,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   m_Type: 0
-  m_Enemy: {fileID: 659501412936082241, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}

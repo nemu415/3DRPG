@@ -18,8 +18,11 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private Player m_Player;
 
+    //[SerializeField]
+    //private Enemy m_Enemy;
+
     [SerializeField]
-    private Enemy m_Enemy;
+    private CharacterManager m_CharacterManager;
 
     [SerializeField]
     private MainCamera m_MainCamera;
@@ -73,22 +76,24 @@ public class BattleManager : MonoBehaviour
     {
         Vector3 playerPos = new Vector3(-3.0f, 1.8f, 0.0f);
 
-        Player player = Instantiate(m_Player, playerPos, this.transform.rotation);
-        CharacterList.Add(player);
+        m_CharacterManager.CreatePlayer();
+        //CharacterList.Add(player);
 
         Vector3 enemyPos = new Vector3(3.0f, 1.8f, 0.0f);
 
         enemyNum = 2;
 
-        Enemy enemy = null;
+        //Enemy enemy = null;
 
-        for (int i = 0; i < enemyNum; i++)
+/*        for (int i = 0; i < enemyNum; i++)
         {
             enemyPos.z = -(float)enemyNum + (float)i * 2;
-            enemy = Instantiate(m_Enemy, enemyPos, this.transform.rotation);
-            CharacterList.Add(enemy);
+            m_CharacterManager.CreateCharacter(CharacterManager.CharacterType.RED_ENEMY);
+            //CharacterList.Add(enemy);
             m_MessageText.AddText("{0} が あらわれた！");
         }
+*/
+        m_CharacterManager.CreateEnemy();
 
         //m_Item.SetActive(true);
 
@@ -96,21 +101,17 @@ public class BattleManager : MonoBehaviour
 
         if (m_Player != null)
         {
-            player.Init();
+            //player.Init();
         }
 
-        if (m_Enemy != null)
+        /*if (m_Enemy != null)
         {
             enemy.Init();
-        }
+        }*/
 
         turnOrder = CharacterList.OfType<IBattleCharacter>().OrderByDescending(c => c.Speed).ToList();
 
-        Debug.Log("行動順");
-        for (int i = 0; i < turnOrder.Count; i++)
-        {
-            Debug.Log(turnOrder[i].Name);
-        }
+        StartCoroutine(BattleFlow());
     }
 
     private void Update()
@@ -143,7 +144,7 @@ public class BattleManager : MonoBehaviour
             }
 
             m_Player.ActedReset();
-            m_Enemy.ActedReset();
+            //m_Enemy.ActedReset();
 
             m_MessageText.SetText(
                 "{0} は どうする？\n" +
@@ -180,20 +181,31 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    public async void Action()
+    public void Action()
     {
         for (int i = 0; i < turnOrder.Count; i++)
         {
             IBattleCharacter currentCharacter = turnOrder[i];
 
-            Debug.Log($"{currentCharacter.Name}のターンです");
-
-            await currentCharacter.TakeTurn();
-
-            Debug.Log($"{currentCharacter.Name}のターン終了");
+            //Debug.Log($"{currentCharacter.Name}の攻撃");
         }
-        Debug.Log("全員のターン終了");
+        //Debug.Log("全員のターン終了");
     }
+
+    IEnumerator WaitForKeyInput()
+    {
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+    }
+
+    IEnumerator BattleFlow()
+    {
+        Debug.Log("バトル開始");
+
+        yield return WaitForKeyInput();
+
+        Debug.Log("次の行動");
+    }
+
 
     /*if (m_PlayerAct == 1)
     {
