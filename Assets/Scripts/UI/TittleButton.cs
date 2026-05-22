@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GoToTitle : MonoBehaviour
+public class TitleButton : MonoBehaviour
 {
-    public void GoTitle()
+    public void LoadTitle()
     {
         SceneManager.LoadScene("TitleScene");
     }
