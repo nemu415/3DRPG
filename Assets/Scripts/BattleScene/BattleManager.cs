@@ -58,6 +58,8 @@ public class BattleManager : MonoBehaviour
 
     private ItemManager.Itemtype m_ItemType;
 
+    private bool m_BattleStart;
+
 
     public interface IBattleCharacter
     {
@@ -85,9 +87,10 @@ public class BattleManager : MonoBehaviour
             enemyPos.z = -(float)enemyNum + (float)i * 2;
             enemy = Instantiate(m_Enemy, enemyPos, this.transform.rotation);
             CharacterList.Add(enemy);
+            m_MessageText.AddText("{0} が あらわれた！");
         }
 
-        m_Item.SetActive(true);
+        //m_Item.SetActive(true);
 
         m_Message.SetActive(true);
 
@@ -108,18 +111,11 @@ public class BattleManager : MonoBehaviour
         {
             Debug.Log(turnOrder[i].Name);
         }
-
-        m_MessageText.SetText("{0} が あらわれた！", m_Enemy.GetName());
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            situationNum++;
-        }
-
-        if (situationNum == 1)
+        if (Input.GetKeyDown(KeyCode.Space) && !m_BattleStart)
         {
             m_MainCamera.BattleStart();
             Vector3 playerTextPos = new Vector3(-400.0f, 130.0f, 0.0f);
@@ -145,21 +141,21 @@ public class BattleManager : MonoBehaviour
                     rectranceForm.anchoredPosition = enemyTextPos;
                 }
             }
+
+            m_Player.ActedReset();
+            m_Enemy.ActedReset();
+
+            m_MessageText.SetText(
+                "{0} は どうする？\n" +
+                "1:攻撃 2:魔法 3:アイテム 4:逃げる"
+                 );
         }
-
-        m_Player.ActedReset();
-        m_Enemy.ActedReset();
-
-        m_MessageText.SetText(
-            "{0} は どうする？\n" +
-            "1:攻撃 2:魔法 3:アイテム 4:逃げる",
-            m_Player.GetName());
 
         // 攻撃
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             m_PlayerAct = 1;
-            situationNum++;
+            Action();
         }
 
         // 魔法
@@ -182,10 +178,6 @@ public class BattleManager : MonoBehaviour
             situationNum++;
         }
 
-        if (situationNum == 2)
-        {
-            Action();
-        }
     }
 
     public async void Action()
