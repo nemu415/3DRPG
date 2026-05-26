@@ -7,4 +7,13 @@ public class GameButton : MonoBehaviour
     {
         SceneManager.LoadScene("GameScene");
     }
+
+    public GameObject MenuRoot;
+
+    public void GoBackGame()
+    {
+        MenuRoot.SetActive(false);
+
+        Time.timeScale = 1f;
+    }
 }
