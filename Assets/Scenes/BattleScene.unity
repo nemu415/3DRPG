@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 75159669}
   - component: {fileID: 75159668}
   - component: {fileID: 75159667}
+  - component: {fileID: 75159671}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -222,6 +223,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &75159671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75159666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3675ff343a255ea459e36698c41481c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TextManager
+  m_MessageText: {fileID: 972025034}
+  m_StatusText: {fileID: 8968870884185472403, guid: 25b6aae1f39523b4a8e2d3cdd75a1127, type: 3}
+  canvasTarget: {fileID: 75159670}
 --- !u!1 &872279963
 GameObject:
   m_ObjectHideFlags: 0
@@ -1187,12 +1203,7 @@ MonoBehaviour:
   m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
   m_CharacterManager: {fileID: 6544191410174298819}
   m_MainCamera: {fileID: 6544191410174298818}
-  m_PlayerStatusText: {fileID: 81620529600061727, guid: 3f8f4bd72bf34814a94949fc42f8b4c6, type: 3}
-  m_EnemyStatusText: {fileID: 7524002618075884998, guid: 8a8148746884d0546b49a01214bae855, type: 3}
-  m_ItemManager: {fileID: 872279965}
-  m_Item: {fileID: 2066803108}
-  m_Message: {fileID: 1917651205}
-  canvasTransform: {fileID: 75159670}
+  m_TextManager: {fileID: 75159671}
 --- !u!114 &6544191410174298818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1221,6 +1232,8 @@ MonoBehaviour:
   m_RedEnemy: {fileID: 3644396506442443258, guid: d11b316eb2dfd84489b448733c183b85, type: 3}
   m_YellowEnemy: {fileID: 7096615590219139109, guid: fca6dae12bd780c40a026f9bab6ec693, type: 3}
   m_BlueEnemy: {fileID: 7005002337597356471, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
+  m_TextManager: {fileID: 75159671}
+  m_Status: {fileID: 8164064950549683773, guid: 25b6aae1f39523b4a8e2d3cdd75a1127, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

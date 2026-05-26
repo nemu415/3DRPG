@@ -93,4 +93,9 @@ public class CharacterBase : MonoBehaviour
             m_Mp = m_MaxMp;
         }
     }
+
+    public void SetStatusText(StatusText m_StatusText)
+    {
+        m_StatusText.SetStatus(m_Hp, m_Mp);
+    }
 }

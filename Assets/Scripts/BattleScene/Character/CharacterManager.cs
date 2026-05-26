@@ -16,6 +16,13 @@ public class CharacterManager : MonoBehaviour
     [SerializeField]
     private BlueEnemy m_BlueEnemy;
 
+    [SerializeField]
+    private TextManager m_TextManager;
+
+    [SerializeField]
+    private GameObject m_Status;
+
+
     public enum CharacterType
     {
         PLAYER,
@@ -27,24 +34,33 @@ public class CharacterManager : MonoBehaviour
 
     List<CharacterBase> CharacterList = new List<CharacterBase>();
 
-    public void CreatePlayer()
+    public void CreateCharacter()
+    {
+        CreatePlayer();
+        CreateEnemy();
+    }
+
+    private void CreatePlayer()
     {
        Player player = Instantiate(m_Player);
        CharacterList.Add(player);
     }
 
-    public void CreateEnemy()
+    private void CreateEnemy()
     {
-        RedEnemy red = Instantiate(m_RedEnemy);
-        BlueEnemy blue = Instantiate(m_BlueEnemy);
-        YellowEnemy yellow = Instantiate(m_YellowEnemy);
+        RedEnemy red = Instantiate(m_RedEnemy, new Vector3(3, 1.8f, 3), Quaternion.identity);
+        BlueEnemy blue = Instantiate(m_BlueEnemy, new Vector3(3, 1.8f, 0), Quaternion.identity);
+        YellowEnemy yellow = Instantiate(m_YellowEnemy, new Vector3(3, 1.8f, -3), Quaternion.identity);
         CharacterList.Add(red);
         CharacterList.Add(blue);
         CharacterList.Add(yellow);
+    }
 
+    public void CreateStatusText()
+    {
         for (int i = 0; i < CharacterList.Count; i++)
         {
-            Debug.Log(CharacterList[i].GetName());
+            m_TextManager.CreateText(TextManager.TextType.STATUS_TEXT);
         }
     }
 }

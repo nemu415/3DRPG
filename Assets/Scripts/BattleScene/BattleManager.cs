@@ -28,22 +28,8 @@ public class BattleManager : MonoBehaviour
     private MainCamera m_MainCamera;
 
     [SerializeField]
-    private GameObject m_PlayerStatusText;
+    private TextManager m_TextManager;
 
-    [SerializeField]
-    private GameObject m_EnemyStatusText;
-
-    [SerializeField]
-    private ItemManager m_ItemManager;
-
-    [SerializeField]
-    private GameObject m_Item;
-
-    [SerializeField]
-    private GameObject m_Message;
-
-    [SerializeField]
-    private Transform canvasTransform;
 
     List<string[]> TextData = new List<string[]>();
 
@@ -74,14 +60,9 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        Vector3 playerPos = new Vector3(-3.0f, 1.8f, 0.0f);
+        m_TextManager.CreateText(TextManager.TextType.MESSAGE_TEXT);
 
-        m_CharacterManager.CreatePlayer();
-        //CharacterList.Add(player);
-
-        Vector3 enemyPos = new Vector3(3.0f, 1.8f, 0.0f);
-
-        enemyNum = 2;
+        m_CharacterManager.CreateCharacter();
 
         //Enemy enemy = null;
 
@@ -93,11 +74,10 @@ public class BattleManager : MonoBehaviour
             m_MessageText.AddText("{0} Ç™ Ç†ÇÁÇÌÇÍÇΩÅI");
         }
 */
-        m_CharacterManager.CreateEnemy();
 
         //m_Item.SetActive(true);
 
-        m_Message.SetActive(true);
+        //m_Message.SetActive(true);
 
         if (m_Player != null)
         {
@@ -119,14 +99,17 @@ public class BattleManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && !m_BattleStart)
         {
             m_MainCamera.BattleStart();
+
+            m_CharacterManager.CreateStatusText();
+
             Vector3 playerTextPos = new Vector3(-400.0f, 130.0f, 0.0f);
             Vector3 enemyTextPos = new Vector3(400.0f, -270.0f, 0.0f);
 
-            GameObject playerStatusText = Instantiate(m_PlayerStatusText, canvasTransform);
-            GameObject enemyStatusText;
+            //GameObject playerStatusText = Instantiate(m_PlayerStatusText, canvasTransform);
+            //GameObject enemyStatusText;
 
-            RectTransform rectranceForm = playerStatusText.GetComponent<RectTransform>();
-            if (rectranceForm != null)
+            //RectTransform rectranceForm = playerStatusText.GetComponent<RectTransform>();
+            /*if (rectranceForm != null)
             {
                 rectranceForm.anchoredPosition = playerTextPos;
             }
@@ -141,7 +124,7 @@ public class BattleManager : MonoBehaviour
                 {
                     rectranceForm.anchoredPosition = enemyTextPos;
                 }
-            }
+            }*/
 
             m_Player.ActedReset();
             //m_Enemy.ActedReset();
