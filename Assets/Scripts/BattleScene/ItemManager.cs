@@ -5,42 +5,48 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    private CanvasGroup m_CanvasGroup;
-
-    [SerializeField]
-    [Multiline(3)]
-    private TextMeshProUGUI m_ItemText;
-
-    public enum Itemtype
+        public enum ItemType
     {
         HP_HEAL,
         MP_HEAL,
         ESCAPE,
     }
 
-    public Itemtype m_Itemtype;
+    public ItemType m_Itemtype;
 
-    private int[] m_ItemNum = { 0, 0, 0};
+    private List<int> ItemList = new List<int>();
 
-    private void Start()
+    private void Awake()
     {
-       for (int i = 0; i < m_ItemNum.Length; i++)
+        int itemCount = System.Enum.GetValues(typeof(ItemType)).Length;
+
+       for (int i = 0; i < itemCount; i++)
        {
-            m_ItemNum[i] = 5 - i;
-       }
+            int initialCount = 5 - i;
+            ItemList.Add(initialCount);
+        }
     }
 
     private void Update()
     {
-        m_ItemText.text = string.Format(
-            "1.回復薬　　　　{0}\n" +
-            "2.魔力チャージ　{1}\n" +
-            "3.煙玉　　　　　{2}",
-            m_ItemNum[0], m_ItemNum[1], m_ItemNum[2]);
+        
     }
 
-    public void SpendItem(Itemtype type)
+    public int GetItemNum(ItemType type)
     {
-        m_ItemNum[(int)type]--;
+        int index = (int)type;
+
+        Debug.Log("取得");
+        if (index >= 0 && index < ItemList.Count)
+        {
+           
+            return ItemList[index];
+        }
+        return 0;
+    }
+
+    public void SpendItem(ItemType type)
+    {
+        ItemList[(int)type]--;
     }
 }

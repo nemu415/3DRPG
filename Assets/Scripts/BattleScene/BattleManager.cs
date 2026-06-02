@@ -1,20 +1,20 @@
 using NUnit.Framework;
-using TMPro;
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine.UI;
-using Unity.VisualScripting;
-using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Threading.Tasks;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.VersionControl;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using static UnityEngine.LowLevelPhysics2D.PhysicsLayers;
 
 public class BattleManager : MonoBehaviour
 {
-    [SerializeField]
-    private MessageText m_MessageText;
-
     [SerializeField]
     private Player m_Player;
 
@@ -45,7 +45,7 @@ public class BattleManager : MonoBehaviour
 
     private int situationNum;
 
-    private ItemManager.Itemtype m_ItemType;
+    private ItemManager.ItemType m_ItemType;
 
     private bool m_BattleStart;
 
@@ -55,39 +55,20 @@ public class BattleManager : MonoBehaviour
         string Name { get; }
         int Speed { get; }
 
-        Task TakeTurn();
+        //Task TakeTurn();
     }
 
     private void Start()
     {
-        m_TextManager.CreateText(TextManager.TextType.MESSAGE_TEXT);
-
         m_CharacterManager.CreateCharacter();
 
-        //Enemy enemy = null;
+        CharacterBase enemy = m_CharacterManager.GetCharacterList()[1];
 
-/*        for (int i = 0; i < enemyNum; i++)
-        {
-            enemyPos.z = -(float)enemyNum + (float)i * 2;
-            m_CharacterManager.CreateCharacter(CharacterManager.CharacterType.RED_ENEMY);
-            //CharacterList.Add(enemy);
-            m_MessageText.AddText("{0} が あらわれた！");
-        }
-*/
+        string enemyName = enemy.GetName();
 
-        //m_Item.SetActive(true);
-
-        //m_Message.SetActive(true);
-
-        if (m_Player != null)
-        {
-            //player.Init();
-        }
-
-        /*if (m_Enemy != null)
-        {
-            enemy.Init();
-        }*/
+        m_TextManager.CreateText(TextManager.TextType.MESSAGE_TEXT);
+        //m_TextManager.SetMessageText("");
+        m_TextManager.SetMessageText(enemyName + "が現れた！");
 
         turnOrder = CharacterList.OfType<IBattleCharacter>().OrderByDescending(c => c.Speed).ToList();
 
@@ -98,13 +79,6 @@ public class BattleManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && !m_BattleStart)
         {
-            m_MainCamera.BattleStart();
-
-            m_CharacterManager.CreateStatusText();
-
-            Vector3 playerTextPos = new Vector3(-400.0f, 130.0f, 0.0f);
-            Vector3 enemyTextPos = new Vector3(400.0f, -270.0f, 0.0f);
-
             //GameObject playerStatusText = Instantiate(m_PlayerStatusText, canvasTransform);
             //GameObject enemyStatusText;
 
@@ -129,10 +103,6 @@ public class BattleManager : MonoBehaviour
             m_Player.ActedReset();
             //m_Enemy.ActedReset();
 
-            m_MessageText.SetText(
-                "{0} は どうする？\n" +
-                "1:攻撃 2:魔法 3:アイテム 4:逃げる"
-                 );
         }
 
         // 攻撃
@@ -170,25 +140,161 @@ public class BattleManager : MonoBehaviour
         {
             IBattleCharacter currentCharacter = turnOrder[i];
 
-            //Debug.Log($"{currentCharacter.Name}の攻撃");
         }
-        //Debug.Log("全員のターン終了");
     }
 
     IEnumerator WaitForKeyInput()
     {
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        yield return null;
+
+        while (!Input.GetKeyDown(KeyCode.Space))
+        {
+            yield return null;
+        }
     }
+
+    IEnumerator WaitForSelect()
+    {
+        yield return null;
+
+
+    } 
 
     IEnumerator BattleFlow()
     {
-        Debug.Log("バトル開始");
-
         yield return WaitForKeyInput();
 
-        Debug.Log("次の行動");
+        Debug.Log("バトル開始");
+
+        BattleStart();
+
+        //yield return WaitForKeyInput();
+
+        StartCoroutine(CharacterAction());
+        
+
     }
 
+    private void BattleStart()
+    {
+        m_MainCamera.BattleStart();
+
+        m_CharacterManager.CreateStatusText();
+    }
+
+    IEnumerator CharacterAction()
+    {
+        int turnNum = 0;
+
+        CharacterBase player = m_CharacterManager.GetCharacterList()[0];
+
+        string playerName = player.GetName();
+
+        while (turnNum < 5)
+        {
+            turnNum++;
+
+            m_TextManager.SetMessageText("ターン" +  turnNum);
+
+            yield return WaitForKeyInput();
+
+            m_TextManager.SetMessageText(
+                playerName + "は どうする？\n" +
+                "1:攻撃 2:魔法 3:アイテム 4:逃げる"
+                 );
+
+            CharacterManager.ActionType playerAction = CharacterManager.ActionType.ATTACK;
+
+            bool inputSelected = false;
+
+            while(!inputSelected)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    playerAction = CharacterManager.ActionType.ATTACK;
+                    inputSelected = true;
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    playerAction = CharacterManager.ActionType.MAGIC;
+                    inputSelected = true;
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    playerAction = CharacterManager.ActionType.ITEM;
+                    inputSelected = true;
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha4))
+                {
+                    playerAction = CharacterManager.ActionType.ESCAPE;
+                    inputSelected = true;
+                }
+
+                yield return null;
+            }
+
+            List<CharacterBase> characterList = m_CharacterManager.GetCharacterList();
+
+            List<CharacterBase> sortedCharacterList = characterList
+                .OrderByDescending(c =>
+                {
+                    if (c.IsPlayer() && (playerAction == CharacterManager.ActionType.ITEM || playerAction == CharacterManager.ActionType.ESCAPE))
+                    {
+                        return 1;
+                    }
+                    return 0;
+                })
+                .ThenByDescending(c => c.GetSpeed())
+                .ToList();
+
+            for (int i = 0; i < sortedCharacterList.Count; i++)
+            {
+                CharacterBase currentCharacter = sortedCharacterList[i];
+                CharacterManager.ActionType finalAction;
+
+                if (currentCharacter.IsPlayer())
+                {
+                    finalAction = playerAction;
+                }
+                else
+                {
+                    finalAction = CharacterManager.ActionType.ATTACK;
+                }
+
+                currentCharacter.Action(finalAction, characterList);
+
+                m_TextManager.SetStatus();
+                
+                yield return WaitForKeyInput();
+            }
+        }
+    }
+
+    /*async Task<CharacterManager.ActionType> SelectAction()
+    {
+        await Task.Delay(100);
+
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            return CharacterManager.ActionType.ATTACK;
+        }
+        else if (Input.GetKey(KeyCode.Alpha2))
+        {
+            return CharacterManager.ActionType.MAGIC;
+        }
+        else if (Input.GetKey(KeyCode.Alpha3))
+        {
+            return CharacterManager.ActionType.ITEM;
+        }
+        else if (Input.GetKey(KeyCode.Alpha4))
+        {
+            return CharacterManager.ActionType.ESCAPE;
+        }
+        else
+        {
+            return 0;
+        }
+    }*/
 
     /*if (m_PlayerAct == 1)
     {

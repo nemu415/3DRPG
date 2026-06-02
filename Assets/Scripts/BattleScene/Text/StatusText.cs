@@ -8,6 +8,8 @@ public class StatusText : MonoBehaviour
     private int m_Hp;
     private int m_Mp;
 
+    private string m_Name;
+
     [SerializeField]
     private Player m_Player;
 
@@ -24,17 +26,16 @@ public class StatusText : MonoBehaviour
 
     private void Update()
     {
-        m_Hp = m_Player.GetHP();
-        m_Mp = m_Player.GetMP();
-
-        m_StatusText.text = "HP:" + m_Hp.ToString("D2") + "\n"
+        m_StatusText.text = m_Name + "\n"
+            + "HP:" + m_Hp.ToString("D2") + "\n"
             + "MP:" + m_Mp.ToString("D2");
     }
 
-    public void SetStatus(int hp, int mp)
+    public void SetStatus(int hp, int mp, string name)
     {
-        m_Hp = hp;  
+        m_Hp = hp;
         m_Mp = mp;
+        m_Name = name;
     }
 
     public void SetPos(Vector2 targetPosition)
@@ -44,8 +45,6 @@ public class StatusText : MonoBehaviour
         if (rectTransform == null) return;
 
         rectTransform.anchoredPosition = targetPosition;
-
-        Debug.Log($"{this.gameObject.name} ‚ð {targetPosition} ‚É”z’u‚µ‚Ü‚µ‚½");
     }
 }
 

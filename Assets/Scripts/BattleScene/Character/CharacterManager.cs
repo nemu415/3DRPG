@@ -32,6 +32,15 @@ public class CharacterManager : MonoBehaviour
         ENEMY_TYPE_MAX
     }
 
+    public enum ActionType
+    {
+        ATTACK,
+        MAGIC,
+        ITEM,
+        ESCAPE,
+        ACTION_TYPE_MAX
+    }
+
     List<CharacterBase> CharacterList = new List<CharacterBase>();
 
     public void CreateCharacter()
@@ -62,5 +71,10 @@ public class CharacterManager : MonoBehaviour
         {
             m_TextManager.CreateText(TextManager.TextType.STATUS_TEXT);
         }
+    }
+
+    public List<CharacterBase> GetCharacterList()
+    {
+        return CharacterList;
     }
 }

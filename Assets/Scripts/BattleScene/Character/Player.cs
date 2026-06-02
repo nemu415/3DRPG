@@ -20,5 +20,13 @@ public class Player : CharacterBase
         m_MagicType = MagicType.FIRE;
         m_Name = "Player";
         m_Acted = false;
+        m_IsPlayer = true;
+    }
+
+    public override void UseItem()
+    {
+        base.UseItem();
+
+
     }
 }

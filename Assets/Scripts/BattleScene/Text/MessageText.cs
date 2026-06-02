@@ -16,6 +16,15 @@ public class MessageText : MonoBehaviour
         
     }
 
+    public void SetPos(Vector2 targetPosition)
+    {
+        RectTransform rectTransform = this.GetComponent<RectTransform>();
+
+        if (rectTransform == null) return;
+
+        rectTransform.anchoredPosition = targetPosition;
+    }
+
     public void SetText(string text)
     {
         m_MessageText.text = text;
