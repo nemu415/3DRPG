@@ -1,11 +1,15 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using static ItemManager;
 
 public class CharacterBase : MonoBehaviour
 {
     protected int m_MaxHp;
     protected int m_MaxMp;
+    protected int m_AttackPercent;
 
     protected int m_Hp;
     protected int m_Mp;
@@ -15,6 +19,8 @@ public class CharacterBase : MonoBehaviour
     protected string m_Name;
     protected bool m_Acted;
     protected bool m_IsPlayer;
+
+    private bool m_IsSelectingItem = false;
 
     public enum MagicType
     {
@@ -34,7 +40,21 @@ public class CharacterBase : MonoBehaviour
 
     private void Update()
     {
+        if (!m_IsSelectingItem) return;
 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SelectItemEnd(ItemManager.ItemType.HP_HEAL);
+            Debug.Log(m_IsSelectingItem);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SelectItemEnd(ItemManager.ItemType.MP_HEAL);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SelectItemEnd(ItemManager.ItemType.ESCAPE);
+        }
     }
 
 
@@ -52,6 +72,11 @@ public class CharacterBase : MonoBehaviour
     public bool IsActed() { return m_Acted; }
 
     public bool IsPlayer() { return m_IsPlayer; }
+
+    public int GetAttackPercent()
+    {
+        return m_AttackPercent;
+    }
 
     public void Act() { m_Acted = true; }
 
@@ -98,9 +123,70 @@ public class CharacterBase : MonoBehaviour
         }
     }
 
-   public virtual void UseItem()
+    public void Escape()
     {
+        //Debug.Log("escape");
 
+        int rand = Random.Range(1, 100);
+
+        int playerSpeed = 0;
+        int enemySumSpeed = 0;
+
+        List<CharacterBase> characterList = new List<CharacterBase>();
+
+        characterList = CharacterManager.Instance.GetCharacterList();
+        Debug.Log($"キャラクターリストの要素数：{characterList.Count}");
+
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            if (characterList[i] != null) continue;
+
+            if (characterList[i].IsPlayer())
+            {
+                playerSpeed = characterList[i].GetSpeed();
+            }
+            else
+            {
+                enemySumSpeed += characterList[i].GetSpeed();
+            }
+        }
+
+        int enemyAvarageSpeed = enemySumSpeed / (characterList.Count - 1);
+
+        int border = 50;
+        border -= (playerSpeed - enemyAvarageSpeed);
+
+        if (rand > border)
+        {
+            TextManager.Instance.SetMessageText("逃げ切れた！");
+
+            SceneManager.LoadScene("SoshiKurosawa");
+        }
+        else
+        {
+            TextManager.Instance.SetMessageText("逃げられなかった");
+        }
+    }
+
+   public void UseItem(ItemManager.ItemType type)
+    {
+        Debug.Log("UseItemが呼ばれました。選択されたアイテム: " + type);
+
+        switch (type)
+        {
+            case ItemManager.ItemType.HP_HEAL:
+                HPHeal(10);
+                TextManager.Instance.SetMessageText("HP回復");
+                break;
+            case ItemManager.ItemType.MP_HEAL:
+                TextManager.Instance.SetMessageText("MP回復");
+                MPHeal(10);
+                break;
+            case ItemManager.ItemType.ESCAPE:
+                TextManager.Instance.SetMessageText("逃走");
+                Escape();
+                break;
+        }
     }
 
     public void SetStatusText(StatusText m_StatusText)
@@ -108,53 +194,70 @@ public class CharacterBase : MonoBehaviour
         m_StatusText.SetStatus(m_Hp, m_Mp, m_Name);
     }
 
-    public void Action(CharacterManager.ActionType type, List<CharacterBase> characterList)
+    public void Action(CharacterManager.ActionType type, CharacterBase targetCharacter)
     {
         switch (type)
         {
             case CharacterManager.ActionType.ATTACK:
-                if (this.gameObject.CompareTag("Enemy"))
+                if (!m_IsPlayer)
                 {
-                    Attack(characterList[0]);
+                    Attack(targetCharacter);
                     TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！"
-                        + "\n" + characterList[0].GetName() + "に" + this.GetPower() + "ダメージ！");
+                        + "\n" + targetCharacter.GetName() + "に" + this.GetPower() + "ダメージ！");
                 }
                 else if (this.gameObject.CompareTag("Player"))
                 {
-                    Attack(characterList[1]);
+                    Attack(targetCharacter);
                     TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！"
-                        + "\n" + characterList[1].GetName() + "に" + this.GetPower() + "ダメージ！");
+                        + "\n" + targetCharacter.GetName() + "に" + this.GetPower() + "ダメージ！");
                 }
 
                 break;
 
             case CharacterManager.ActionType.MAGIC:
-                if (this.gameObject.CompareTag("Enemy"))
+                if (!m_IsPlayer)
                 {
-                    Magic(characterList[0]);
+                    Magic(targetCharacter);
                     TextManager.Instance.SetMessageText(this.GetName() + "の魔法！"
-                        + "\n" + characterList[0].GetName() + "に" + this.GetMagic() + "ダメージ！");
+                        + "\n" + targetCharacter.GetName() + "に" + this.GetMagic() + "ダメージ！");
                 }
                 else if (this.gameObject.CompareTag("Player"))
                 {
-                    Magic(characterList[1]);
+                    Magic(targetCharacter);
                     TextManager.Instance.SetMessageText(this.GetName() + "の魔法！"
-                        + "\n" + characterList[1].GetName() + "に" + this.GetMagic() + "ダメージ！");
+                        + "\n" + targetCharacter.GetName() + "に" + this.GetMagic() + "ダメージ！");
                 }
 
                 break;
 
             case CharacterManager.ActionType.ITEM:
-                TextManager.Instance.CreateText(TextManager.TextType.ITEM_TEXT);
-                TextManager.Instance.SetItemText();
-                break;
+                if (m_IsPlayer)
+                {
+                    TextManager.Instance.CreateText(TextManager.TextType.ITEM_TEXT);
+                    TextManager.Instance.SetItemText();
+
+                    m_IsSelectingItem = true;
+                }
+                else
+                {
+
+                }
+                    break;
 
             case CharacterManager.ActionType.ESCAPE:
-
-
+                Debug.Log("escape");
+                Escape();
                 break;
 
             default: break;
         }
     }
+
+    private void SelectItemEnd(ItemManager.ItemType type)
+    {
+        m_IsSelectingItem = false;
+        UseItem(type);
+    }
+
+    
 }

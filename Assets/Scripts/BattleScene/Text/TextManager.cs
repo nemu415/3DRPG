@@ -9,7 +9,7 @@ public class TextManager : MonoBehaviour
     private Vector2 m_EnemyStatusPos;
     private Vector2 m_MessageTextPos;
 
-    private float lineSpacing = 150f;
+    private float lineSpacing = 170f;
 
     [SerializeField]
     private MessageText m_MessageText;
@@ -49,7 +49,7 @@ public class TextManager : MonoBehaviour
 
     private void Start()
     {
-        m_PlayerStatusPos = new Vector2(380.0f, -170.0f);
+        m_PlayerStatusPos = new Vector2(360.0f, -170.0f);
         m_EnemyStatusPos = new Vector2(-250.0f, 200.0f);
         m_MessageTextPos = new Vector2(450.0f, 300.0f);
     }
@@ -80,6 +80,14 @@ public class TextManager : MonoBehaviour
     public void SetMessageText(string message)
     {
         m_MessageText.SetText(message);
+
+        m_MessageText.SetPos(m_MessageTextPos);
+
+    }
+
+    public void AddMessageText(string message)
+    {
+        m_MessageText.AddText(message);
 
         m_MessageText.SetPos(m_MessageTextPos);
 

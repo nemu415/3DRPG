@@ -4,11 +4,13 @@ public class RedEnemy : CharacterBase
 {
     private static int m_RedMaxHp = 50;
     private static int m_RedMaxMp = 30;
+    private static int m_RedAttackPercant = 30;
 
     private void Awake()
     {
         m_MaxHp = m_RedMaxHp;
         m_MaxMp = m_RedMaxMp;
+        m_AttackPercent = m_RedAttackPercant;
 
         m_Hp = m_MaxHp;
         m_Mp = m_MaxMp;

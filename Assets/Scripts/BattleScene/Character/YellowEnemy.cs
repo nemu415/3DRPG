@@ -4,11 +4,13 @@ public class YellowEnemy : CharacterBase
 {
     private static int m_YellowMaxHp = 60;
     private static int m_YellowMaxMp = 20;
+    private static int m_YellowAttackPercant = 50;
 
     private void Awake()
     {
         m_MaxHp = m_YellowMaxHp;
         m_MaxMp = m_YellowMaxMp;
+        m_AttackPercent = m_YellowAttackPercant;
 
         m_Hp = m_MaxHp;
         m_Mp = m_MaxMp;

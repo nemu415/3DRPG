@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-        public enum ItemType
+    public static ItemManager Instance { get; private set; }
+
+    public enum ItemType
     {
         HP_HEAL,
         MP_HEAL,
@@ -36,7 +38,6 @@ public class ItemManager : MonoBehaviour
     {
         int index = (int)type;
 
-        Debug.Log("æ“¾");
         if (index >= 0 && index < ItemList.Count)
         {
            

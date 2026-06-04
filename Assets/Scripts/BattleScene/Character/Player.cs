@@ -23,10 +23,4 @@ public class Player : CharacterBase
         m_IsPlayer = true;
     }
 
-    public override void UseItem()
-    {
-        base.UseItem();
-
-
-    }
 }

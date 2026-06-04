@@ -26,9 +26,6 @@ public class StatusText : MonoBehaviour
 
     private void Update()
     {
-        m_StatusText.text = m_Name + "\n"
-            + "HP:" + m_Hp.ToString("D2") + "\n"
-            + "MP:" + m_Mp.ToString("D2");
     }
 
     public void SetStatus(int hp, int mp, string name)
@@ -36,6 +33,10 @@ public class StatusText : MonoBehaviour
         m_Hp = hp;
         m_Mp = mp;
         m_Name = name;
+
+        m_StatusText.text = m_Name + "\n"
+           + "HP:" + m_Hp.ToString("D2") + "\n"
+           + "MP:" + m_Mp.ToString("D2");
     }
 
     public void SetPos(Vector2 targetPosition)

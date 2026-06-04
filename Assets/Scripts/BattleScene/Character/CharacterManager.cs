@@ -4,6 +4,8 @@ using static BattleManager;
 
 public class CharacterManager : MonoBehaviour
 {
+    public static CharacterManager Instance { get; private set; }
+
     [SerializeField]
     private Player m_Player;
 
@@ -41,7 +43,19 @@ public class CharacterManager : MonoBehaviour
         ACTION_TYPE_MAX
     }
 
-    List<CharacterBase> CharacterList = new List<CharacterBase>();
+    public List<CharacterBase> CharacterList = new List<CharacterBase>();
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void CreateCharacter()
     {
@@ -75,6 +89,14 @@ public class CharacterManager : MonoBehaviour
 
     public List<CharacterBase> GetCharacterList()
     {
-        return CharacterList;
+        if (CharacterList == null)
+        {
+            Debug.Log("null");
+            return null;
+        }
+        else
+        {
+            return CharacterList;
+        }
     }
 }

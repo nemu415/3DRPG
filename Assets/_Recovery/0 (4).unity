@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TextManager
   m_MessageText: {fileID: 1763414009}
-  m_StatusText: {fileID: -3568264992734311589, guid: 25b6aae1f39523b4a8e2d3cdd75a1127, type: 3}
+  m_StatusText: {fileID: 8968870884185472403, guid: 25b6aae1f39523b4a8e2d3cdd75a1127, type: 3}
   m_ItemText: {fileID: 872279969}
   itemText: {fileID: 2066803108}
   canvasTarget: {fileID: 75159670}
