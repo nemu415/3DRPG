@@ -10,9 +10,6 @@ public class ItemText : MonoBehaviour
     [Multiline(3)]
     private TextMeshProUGUI m_ItemText;
 
-    [SerializeField]
-    private ItemManager m_ItemManager;
-
     private void Awake()
     {
         m_ItemText = GetComponent<TextMeshProUGUI>();
@@ -34,9 +31,9 @@ public class ItemText : MonoBehaviour
             "1.回復薬　　　　{0}\n" +
             "2.魔力チャージ　{1}\n" +
             "3.煙玉　　　　　{2}",
-            m_ItemManager.GetItemNum(ItemManager.ItemType.HP_HEAL),
-            m_ItemManager.GetItemNum(ItemManager.ItemType.MP_HEAL), 
-            m_ItemManager.GetItemNum(ItemManager.ItemType.ESCAPE)
+            ItemManager.Instance.GetItemNum(ItemType.HP_HEAL),
+            ItemManager.Instance.GetItemNum(ItemType.MP_HEAL),
+            ItemManager.Instance.GetItemNum(ItemType.ESCAPE)
         );
     }
 

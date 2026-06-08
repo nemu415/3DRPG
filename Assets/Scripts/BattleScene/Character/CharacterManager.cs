@@ -2,6 +2,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using static BattleManager;
 
+public enum CharacterType
+{
+    PLAYER,
+    RED_ENEMY,
+    YELLOW_ENEMY,
+    BLUE_ENEMY,
+    ENEMY_TYPE_MAX
+}
+
+public enum ActionType
+{
+    ATTACK,
+    MAGIC,
+    ITEM,
+    ESCAPE,
+    ACTION_TYPE_MAX
+}
+
 public class CharacterManager : MonoBehaviour
 {
     public static CharacterManager Instance { get; private set; }
@@ -23,25 +41,6 @@ public class CharacterManager : MonoBehaviour
 
     [SerializeField]
     private GameObject m_Status;
-
-
-    public enum CharacterType
-    {
-        PLAYER,
-        RED_ENEMY,
-        YELLOW_ENEMY,
-        BLUE_ENEMY,
-        ENEMY_TYPE_MAX
-    }
-
-    public enum ActionType
-    {
-        ATTACK,
-        MAGIC,
-        ITEM,
-        ESCAPE,
-        ACTION_TYPE_MAX
-    }
 
     public List<CharacterBase> CharacterList = new List<CharacterBase>();
 
@@ -83,7 +82,7 @@ public class CharacterManager : MonoBehaviour
     {
         for (int i = 0; i < CharacterList.Count; i++)
         {
-            m_TextManager.CreateText(TextManager.TextType.STATUS_TEXT);
+            m_TextManager.CreateText(TextType.STATUS_TEXT);
         }
     }
 

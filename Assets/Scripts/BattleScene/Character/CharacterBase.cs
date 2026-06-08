@@ -44,16 +44,15 @@ public class CharacterBase : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SelectItemEnd(ItemManager.ItemType.HP_HEAL);
-            Debug.Log(m_IsSelectingItem);
+            SelectItemEnd(ItemType.HP_HEAL);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            SelectItemEnd(ItemManager.ItemType.MP_HEAL);
+            SelectItemEnd(ItemType.MP_HEAL);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            SelectItemEnd(ItemManager.ItemType.ESCAPE);
+            SelectItemEnd(ItemType.ESCAPE);
         }
     }
 
@@ -135,7 +134,6 @@ public class CharacterBase : MonoBehaviour
         List<CharacterBase> characterList = new List<CharacterBase>();
 
         characterList = CharacterManager.Instance.GetCharacterList();
-        Debug.Log($"キャラクターリストの要素数：{characterList.Count}");
 
         for (int i = 0; i < characterList.Count; i++)
         {
@@ -168,37 +166,39 @@ public class CharacterBase : MonoBehaviour
         }
     }
 
-   public void UseItem(ItemManager.ItemType type)
-    {
-        Debug.Log("UseItemが呼ばれました。選択されたアイテム: " + type);
-
+   public void UseItem(ItemType type)
+   {
         switch (type)
         {
-            case ItemManager.ItemType.HP_HEAL:
+            case ItemType.HP_HEAL:
                 HPHeal(10);
                 TextManager.Instance.SetMessageText("HP回復");
                 break;
-            case ItemManager.ItemType.MP_HEAL:
+            case ItemType.MP_HEAL:
                 TextManager.Instance.SetMessageText("MP回復");
                 MPHeal(10);
                 break;
-            case ItemManager.ItemType.ESCAPE:
+            case ItemType.ESCAPE:
                 TextManager.Instance.SetMessageText("逃走");
                 Escape();
                 break;
+            default:
+                break;
         }
-    }
+
+        ItemManager.Instance.SpendItem(type);
+   }
 
     public void SetStatusText(StatusText m_StatusText)
     {
         m_StatusText.SetStatus(m_Hp, m_Mp, m_Name);
     }
 
-    public void Action(CharacterManager.ActionType type, CharacterBase targetCharacter)
+    public void Action(ActionType type, CharacterBase targetCharacter)
     {
         switch (type)
         {
-            case CharacterManager.ActionType.ATTACK:
+            case ActionType.ATTACK:
                 if (!m_IsPlayer)
                 {
                     Attack(targetCharacter);
@@ -214,7 +214,7 @@ public class CharacterBase : MonoBehaviour
 
                 break;
 
-            case CharacterManager.ActionType.MAGIC:
+            case ActionType.MAGIC:
                 if (!m_IsPlayer)
                 {
                     Magic(targetCharacter);
@@ -230,10 +230,10 @@ public class CharacterBase : MonoBehaviour
 
                 break;
 
-            case CharacterManager.ActionType.ITEM:
+            case ActionType.ITEM:
                 if (m_IsPlayer)
                 {
-                    TextManager.Instance.CreateText(TextManager.TextType.ITEM_TEXT);
+                    TextManager.Instance.CreateText(TextType.ITEM_TEXT);
                     TextManager.Instance.SetItemText();
 
                     m_IsSelectingItem = true;
@@ -244,7 +244,7 @@ public class CharacterBase : MonoBehaviour
                 }
                     break;
 
-            case CharacterManager.ActionType.ESCAPE:
+            case ActionType.ESCAPE:
                 Debug.Log("escape");
                 Escape();
                 break;
@@ -253,10 +253,11 @@ public class CharacterBase : MonoBehaviour
         }
     }
 
-    private void SelectItemEnd(ItemManager.ItemType type)
+    private void SelectItemEnd(ItemType type)
     {
         m_IsSelectingItem = false;
         UseItem(type);
+        TextManager.Instance.DeleteText(TextType.ITEM_TEXT);
     }
 
     

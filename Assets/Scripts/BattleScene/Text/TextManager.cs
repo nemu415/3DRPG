@@ -1,6 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum TextType
+{
+    MESSAGE_TEXT,
+    STATUS_TEXT,
+    ITEM_TEXT,
+    TEXT_TYPE_MAX,
+    TEXT_TYPE_NONE = -1
+};
+
 public class TextManager : MonoBehaviour
 {
     public static TextManager Instance { get; private set; }
@@ -29,14 +38,7 @@ public class TextManager : MonoBehaviour
     [SerializeField]
     private CharacterManager m_CharacterManager;
 
-    public enum TextType
-    {
-        MESSAGE_TEXT,
-        STATUS_TEXT,
-        ITEM_TEXT,
-        TEXT_TYPE_MAX,
-        TEXT_TYPE_NONE = -1
-    };
+    
 
     List<StatusText> m_StatusTextList = new List<StatusText>();
 
@@ -70,6 +72,25 @@ public class TextManager : MonoBehaviour
 
             case TextType.ITEM_TEXT:
                 itemText.SetActive(true);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void DeleteText(TextType type)
+    {
+        switch (type)
+        {
+            case TextType.MESSAGE_TEXT:
+                break;
+
+            case TextType.STATUS_TEXT:
+                break;
+
+            case TextType.ITEM_TEXT:
+                itemText.SetActive(false);
                 break;
 
             default:

@@ -45,7 +45,7 @@ public class BattleManager : MonoBehaviour
 
     private int situationNum;
 
-    private ItemManager.ItemType m_ItemType;
+    private ItemType m_ItemType;
 
     private bool m_BattleStart;
 
@@ -66,7 +66,7 @@ public class BattleManager : MonoBehaviour
 
         string enemyName = enemy.GetName();
 
-        m_TextManager.CreateText(TextManager.TextType.MESSAGE_TEXT);
+        m_TextManager.CreateText(TextType.MESSAGE_TEXT);
         //m_TextManager.SetMessageText("");
         m_TextManager.SetMessageText(enemyName + "が現れた！");
 
@@ -133,7 +133,7 @@ public class BattleManager : MonoBehaviour
                 "1:攻撃 2:魔法 3:アイテム 4:逃げる"
                  );
 
-            CharacterManager.ActionType playerAction = CharacterManager.ActionType.ATTACK;
+            ActionType playerAction = ActionType.ATTACK;
 
             bool inputSelected = false;
 
@@ -143,32 +143,43 @@ public class BattleManager : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    playerAction = CharacterManager.ActionType.ATTACK;
+                    playerAction = ActionType.ATTACK;
                     inputSelected = true;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    playerAction = CharacterManager.ActionType.MAGIC;
+                    playerAction = ActionType.MAGIC;
                     inputSelected = true;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha3))
                 {
-                    playerAction = CharacterManager.ActionType.ITEM;
+                    playerAction = ActionType.ITEM;
                     inputSelected = true;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha4))
                 {
-                    playerAction = CharacterManager.ActionType.ESCAPE;
+                    playerAction = ActionType.ESCAPE;
                     inputSelected = true;
                 }
             }
 
             CharacterBase playerTargetCharacter = m_CharacterManager.GetCharacterList()[0];
 
+            List < CharacterBase > characterList = new List < CharacterBase >();
 
-            if (playerAction == CharacterManager.ActionType.ATTACK || playerAction == CharacterManager.ActionType.MAGIC)
+            characterList = m_CharacterManager.GetCharacterList();
+
+            if (playerAction == ActionType.ATTACK || playerAction == ActionType.MAGIC)
             {
-                m_TextManager.SetMessageText("誰に攻撃する？");
+                m_TextManager.SetMessageText("誰に攻撃する？\n"
+                    + "1." + characterList[1].GetName() + "\n"
+                    + "2." + characterList[2].GetName() + "\n"
+                    + "3." + characterList[3].GetName());
+
+                if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    yield return null;
+                }
 
                 bool targetSelected = false;
 
@@ -194,12 +205,16 @@ public class BattleManager : MonoBehaviour
                 }
             }
 
-            List<CharacterBase> characterList = m_CharacterManager.GetCharacterList();
+            if (playerAction == ActionType.ITEM)
+            {
+                m_TextManager.SetMessageText("どのアイテムを使う？");
+
+            }
 
             List<CharacterBase> sortedCharacterList = characterList
                 .OrderByDescending(c =>
                 {
-                    if (c.IsPlayer() && (playerAction == CharacterManager.ActionType.ITEM || playerAction == CharacterManager.ActionType.ESCAPE))
+                    if (c.IsPlayer() && (playerAction == ActionType.ITEM || playerAction == ActionType.ESCAPE))
                     {
                         return 1;
                     }
@@ -217,7 +232,7 @@ public class BattleManager : MonoBehaviour
 
                 CharacterBase targetCharacter = m_CharacterManager.GetCharacterList()[0];
 
-                CharacterManager.ActionType finalAction;
+                ActionType finalAction;
 
                 if (currentCharacter.IsPlayer())
                 {
@@ -233,11 +248,11 @@ public class BattleManager : MonoBehaviour
                     int border = Random.Range(0, 100);
                     if (attackPercent > border)
                     {
-                        finalAction = CharacterManager.ActionType.ATTACK;
+                        finalAction = ActionType.ATTACK;
                     }
                     else
                     {
-                        finalAction = CharacterManager.ActionType.MAGIC;
+                        finalAction = ActionType.MAGIC;
                     }
                 }
 

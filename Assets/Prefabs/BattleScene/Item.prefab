@@ -136,7 +136,6 @@ GameObject:
   - component: {fileID: 8139072675349695776}
   - component: {fileID: 3914861716325829945}
   - component: {fileID: 6099599096300601654}
-  - component: {fileID: 721772946492956055}
   - component: {fileID: 5906748293612868735}
   - component: {fileID: 103055644417749634}
   m_Layer: 5
@@ -265,20 +264,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &721772946492956055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2401835720976769612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fbdc265b193b9743a28fa152d9f62e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemManager
-  m_ItemText: {fileID: 6099599096300601654}
-  m_Itemtype: 0
 --- !u!225 &5906748293612868735
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -304,3 +289,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::itemText
   m_ItemText: {fileID: 6099599096300601654}
+  m_ItemManager: {fileID: 0}
