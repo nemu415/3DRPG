@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class RedEnemy : CharacterBase
 {
-    private static int m_RedMaxHp = 50;
+    private static int m_RedMaxHp = 10;
     private static int m_RedMaxMp = 30;
     private static int m_RedAttackPercant = 30;
 

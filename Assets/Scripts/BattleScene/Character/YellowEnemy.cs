@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class YellowEnemy : CharacterBase
 {
-    private static int m_YellowMaxHp = 60;
+    private static int m_YellowMaxHp = 10;
     private static int m_YellowMaxMp = 20;
     private static int m_YellowAttackPercant = 50;
 

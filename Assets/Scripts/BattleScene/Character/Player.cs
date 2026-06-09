@@ -4,7 +4,7 @@ using static BattleManager;
 
 public class Player : CharacterBase
 {
-    private static int m_PlayerMaxHp = 100;
+    private static int m_PlayerMaxHp = 300;
     private static int m_PlayerMaxMp = 80;
 
     private void Awake()

@@ -212,6 +212,11 @@ public class CharacterBase : MonoBehaviour
                         + "\n" + targetCharacter.GetName() + "に" + this.GetPower() + "ダメージ！");
                 }
 
+                if (targetCharacter.GetHP() <= 0)
+                {
+                    TextManager.Instance.AddMessageText("\n" + targetCharacter.GetName() + "は倒れた");
+                }
+
                 break;
 
             case ActionType.MAGIC:
@@ -226,6 +231,11 @@ public class CharacterBase : MonoBehaviour
                     Magic(targetCharacter);
                     TextManager.Instance.SetMessageText(this.GetName() + "の魔法！"
                         + "\n" + targetCharacter.GetName() + "に" + this.GetMagic() + "ダメージ！");
+                }
+
+                if (targetCharacter.GetHP() <= 0)
+                {
+                    TextManager.Instance.AddMessageText("\n" + targetCharacter.GetName() + "は倒れた");
                 }
 
                 break;
@@ -260,5 +270,10 @@ public class CharacterBase : MonoBehaviour
         TextManager.Instance.DeleteText(TextType.ITEM_TEXT);
     }
 
+    public void Die()
+    {
+        Destroy(gameObject);
+
+    }
     
 }

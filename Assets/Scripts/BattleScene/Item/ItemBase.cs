@@ -11,13 +11,11 @@ public class ItemBase : MonoBehaviour
 
     public int GetNum()
     {
-        Debug.Log($"[GetNum] ID: {this.GetInstanceID()} / ”’l: {m_Num}");
         return m_Num;
     }
 
     public void Spend()
     {
         m_Num--;
-        Debug.Log($"[Spend] ID: {this.GetInstanceID()} / c‚è: {m_Num}");
     }
 }

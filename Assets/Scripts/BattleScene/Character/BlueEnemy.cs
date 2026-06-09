@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BlueEnemy : CharacterBase
 {
-    private static int m_BlueMaxHp = 70;
+    private static int m_BlueMaxHp = 10;
     private static int m_BlueMaxMp = 50;
     private static int m_BlueAttackPercant = 50;
 

@@ -56,6 +56,19 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        for (int i = 0; i < CharacterList.Count; i++)
+        {
+            CharacterBase character = CharacterList[i];
+            if (character.GetHP() <= 0)
+            {
+                character.Die();
+                CharacterList.RemoveAt(i);
+            }
+        }
+    }
+
     public void CreateCharacter()
     {
         CreatePlayer();
@@ -70,12 +83,35 @@ public class CharacterManager : MonoBehaviour
 
     private void CreateEnemy()
     {
-        RedEnemy red = Instantiate(m_RedEnemy, new Vector3(3, 1.8f, 3), Quaternion.identity);
-        BlueEnemy blue = Instantiate(m_BlueEnemy, new Vector3(3, 1.8f, 0), Quaternion.identity);
-        YellowEnemy yellow = Instantiate(m_YellowEnemy, new Vector3(3, 1.8f, -3), Quaternion.identity);
-        CharacterList.Add(red);
-        CharacterList.Add(blue);
-        CharacterList.Add(yellow);
+        int enemyNum = Random.Range(1, 4);
+        enemyNum = 2;
+
+        for (int i = 0;  i < enemyNum; i++)
+        {
+            int enemyType = Random.Range(1, 4);
+
+            Vector3 spawnPos = new Vector3(0, 0, 0);
+
+            spawnPos = new Vector3(3, 1.8f, 1.5f * (enemyNum - 1)  - i * 3);
+
+            switch (enemyType)
+            {
+                case 1:
+                    RedEnemy red = Instantiate(m_RedEnemy, spawnPos, Quaternion.identity);
+                    CharacterList.Add(red);
+                    break;
+                case 2:
+                    BlueEnemy blue = Instantiate(m_BlueEnemy, spawnPos, Quaternion.identity);
+                    CharacterList.Add(blue);
+                    break;
+                case 3:
+                    YellowEnemy yellow = Instantiate(m_YellowEnemy, spawnPos, Quaternion.identity);
+                    CharacterList.Add(yellow);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public void CreateStatusText()

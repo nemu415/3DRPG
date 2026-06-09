@@ -95,14 +95,11 @@ public class BattleManager : MonoBehaviour
     {
         yield return WaitForKeyInput();
 
-        Debug.Log("バトル開始");
-
         BattleStart();
-
-        //yield return WaitForKeyInput();
 
         StartCoroutine(CharacterAction());
         
+        // バトル終了の処理
     }
 
     private void BattleStart()
@@ -114,20 +111,16 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator CharacterAction()
     {
-        int turnNum = 0;
+        List<CharacterBase> characterList = new List<CharacterBase>();
+
+        characterList = m_CharacterManager.GetCharacterList();
 
         CharacterBase player = m_CharacterManager.GetCharacterList()[0];
 
         string playerName = player.GetName();
 
-        while (turnNum < 5)
+        while (characterList.Count > 1)
         {
-            turnNum++;
-
-            m_TextManager.SetMessageText("ターン" +  turnNum);
-
-            yield return WaitForKeyInput();
-
             m_TextManager.SetMessageText(
                 playerName + "は どうする？\n" +
                 "1:攻撃 2:魔法 3:アイテム 4:逃げる"
@@ -165,16 +158,16 @@ public class BattleManager : MonoBehaviour
 
             CharacterBase playerTargetCharacter = m_CharacterManager.GetCharacterList()[0];
 
-            List < CharacterBase > characterList = new List < CharacterBase >();
-
-            characterList = m_CharacterManager.GetCharacterList();
+            
 
             if (playerAction == ActionType.ATTACK || playerAction == ActionType.MAGIC)
             {
-                m_TextManager.SetMessageText("誰に攻撃する？\n"
-                    + "1." + characterList[1].GetName() + "\n"
-                    + "2." + characterList[2].GetName() + "\n"
-                    + "3." + characterList[3].GetName());
+                m_TextManager.SetMessageText("誰に攻撃する？");
+
+                for (int i = 1; i < characterList.Count; i++)
+                {
+                    m_TextManager.AddMessageText("\n" + i + "." + characterList[i].GetName());
+                }
 
                 if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3))
                 {
@@ -228,6 +221,8 @@ public class BattleManager : MonoBehaviour
 
             for (int i = 0; i < sortedCharacterList.Count; i++)
             {
+                if (sortedCharacterList[i] == null) continue;
+
                 CharacterBase currentCharacter = sortedCharacterList[i];
 
                 CharacterBase targetCharacter = m_CharacterManager.GetCharacterList()[0];

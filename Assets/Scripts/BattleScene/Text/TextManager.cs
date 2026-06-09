@@ -149,6 +149,12 @@ public class TextManager : MonoBehaviour
             string name = character.GetName();
 
             m_StatusTextList[i].SetStatus(hp, mp, name);
+
+            if (hp <= 0)
+            {
+                Destroy(m_StatusTextList[i].gameObject);
+                m_StatusTextList.RemoveAt(i);
+            }
         }
     }
 
