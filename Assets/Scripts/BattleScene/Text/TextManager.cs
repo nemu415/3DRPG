@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public enum TextType
 {
@@ -64,7 +65,7 @@ public class TextManager : MonoBehaviour
                 break;
 
             case TextType.STATUS_TEXT:
-                StatusText text = Instantiate(m_StatusText, canvasTarget);
+                StatusText text = Instantiate(m_StatusText, canvasTarget, false);
                 m_StatusTextList.Add(text);
                 SetStatusText();
                 SetStatus();
@@ -116,21 +117,41 @@ public class TextManager : MonoBehaviour
 
     public void SetStatusText()
     {
+        if (canvasTarget == null) return;
+
         for (int i = 0; i < m_StatusTextList.Count; i++)
         {
             if (m_StatusTextList[i] == null) continue;
 
+            RectTransform uiRect = m_StatusTextList[i].GetComponent<RectTransform>();
+            if (uiRect == null) continue;
+
             if (i == 0)
             {
-                m_StatusTextList[i].SetPos(m_PlayerStatusPos);
+                // プレイヤー：右下に強制固定
+                uiRect.anchorMin = new Vector2(1f, 0f);
+                uiRect.anchorMax = new Vector2(1f, 0f);
+                uiRect.pivot = new Vector2(1f, 0f);
+                m_StatusTextList[i].SetPos(new Vector2(-20f, 20f));
             }
             else
             {
-                float xOffset = (i - 1) * lineSpacing;
-                Vector2 calcuratedPos = new Vector2(m_EnemyStatusPos.x + xOffset, m_EnemyStatusPos.y);
+                // 敵：左上に順番に並べる
+                uiRect.anchorMin = new Vector2(0f, 1f);
+                uiRect.anchorMax = new Vector2(0f, 1f);
+                uiRect.pivot = new Vector2(0f, 1f);
 
-                m_StatusTextList[i].SetPos(calcuratedPos);
+                int enemyIndex = i - 1;
+                float startX = 20f;
+                float startY = -20f;
+
+                // プレハブのサイズに依存しないよう、固定値(250幅)で絶対に横に引き離す
+                float xOffset = enemyIndex * 250f;
+                m_StatusTextList[i].SetPos(new Vector2(startX + xOffset, startY));
             }
+
+            uiRect.transform.localScale = Vector3.one;
+            uiRect.transform.localPosition = new Vector3(uiRect.transform.localPosition.x, uiRect.transform.localPosition.y, 0f);
         }
     }
 

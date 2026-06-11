@@ -98,8 +98,6 @@ public class BattleManager : MonoBehaviour
         BattleStart();
 
         StartCoroutine(CharacterAction());
-        
-        // ƒoƒgƒ‹I—¹‚Ìˆ—
     }
 
     private void BattleStart()
@@ -130,7 +128,7 @@ public class BattleManager : MonoBehaviour
 
             bool inputSelected = false;
 
-            while(!inputSelected)
+            while (!inputSelected)
             {
                 yield return null;
 
@@ -158,7 +156,7 @@ public class BattleManager : MonoBehaviour
 
             CharacterBase playerTargetCharacter = m_CharacterManager.GetCharacterList()[0];
 
-            
+
 
             if (playerAction == ActionType.ATTACK || playerAction == ActionType.MAGIC)
             {
@@ -216,9 +214,6 @@ public class BattleManager : MonoBehaviour
                 .ThenByDescending(c => c.GetSpeed())
                 .ToList();
 
-
-            
-
             for (int i = 0; i < sortedCharacterList.Count; i++)
             {
                 if (sortedCharacterList[i] == null) continue;
@@ -254,11 +249,35 @@ public class BattleManager : MonoBehaviour
                 currentCharacter.Action(finalAction, targetCharacter);
 
                 //m_TextManager.SetStatus();
-                
+
                 yield return WaitForKeyInput();
             }
         }
+
+        StartCoroutine(BattleEnd());
+
+        yield break;
     }
 
-    
+    private IEnumerator BattleEnd()
+    {
+        List<CharacterBase> characterList = new List<CharacterBase>();
+
+        characterList = m_CharacterManager.GetCharacterList();
+
+        if (characterList[0].IsPlayer())
+        {
+            m_TextManager.SetMessageText("Ÿ—˜");
+        }
+        else
+        {
+            m_TextManager.SetMessageText("”s–k");
+        }
+
+        yield return WaitForKeyInput();
+
+        SceneManager.LoadScene("SoshiKurosawa");
+
+        yield break;
+    }
 }
