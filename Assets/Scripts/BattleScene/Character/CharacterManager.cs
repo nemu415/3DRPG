@@ -25,16 +25,16 @@ public class CharacterManager : MonoBehaviour
     public static CharacterManager Instance { get; private set; }
 
     [SerializeField]
-    private Player m_Player;
+    private GameObject m_Player;
 
     [SerializeField]
-    private RedEnemy m_RedEnemy;
+    private GameObject m_RedEnemy;
 
     [SerializeField]
-    private YellowEnemy m_YellowEnemy;
+    private GameObject m_YellowEnemy;
 
     [SerializeField]
-    private BlueEnemy m_BlueEnemy;
+    private GameObject m_BlueEnemy;
 
     [SerializeField]
     private TextManager m_TextManager;
@@ -69,6 +69,8 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    
+
     public void CreateCharacter()
     {
         CreatePlayer();
@@ -77,8 +79,12 @@ public class CharacterManager : MonoBehaviour
 
     private void CreatePlayer()
     {
-       Player player = Instantiate(m_Player);
-       CharacterList.Add(player);
+        Vector3 spawnPos = new Vector3(-3, 1.8f, 0);
+
+        GameObject instance = Instantiate(m_Player, spawnPos, Quaternion.identity);
+        Player player = instance.GetComponentInChildren<Player>();
+        CharacterList.Add(player);
+        Debug.Log($"ê∂ê¨íºå„ÇÃç¿ïW: {instance.transform.position}");
     }
 
     private void CreateEnemy()
@@ -97,16 +103,25 @@ public class CharacterManager : MonoBehaviour
             switch (enemyType)
             {
                 case 1:
-                    RedEnemy red = Instantiate(m_RedEnemy, spawnPos, Quaternion.identity);
-                    CharacterList.Add(red);
+                    {
+                        GameObject instance = Instantiate(m_RedEnemy, spawnPos, Quaternion.identity);
+                        RedEnemy red = instance.GetComponentInChildren<RedEnemy>();
+                        CharacterList.Add(red);
+                    }
                     break;
                 case 2:
-                    BlueEnemy blue = Instantiate(m_BlueEnemy, spawnPos, Quaternion.identity);
-                    CharacterList.Add(blue);
+                    {
+                        GameObject instance = Instantiate(m_BlueEnemy, spawnPos, Quaternion.identity);
+                        BlueEnemy blue = instance.GetComponentInChildren<BlueEnemy>();
+                        CharacterList.Add(blue);
+                    }
                     break;
                 case 3:
-                    YellowEnemy yellow = Instantiate(m_YellowEnemy, spawnPos, Quaternion.identity);
-                    CharacterList.Add(yellow);
+                    {
+                        GameObject instance = Instantiate(m_YellowEnemy, spawnPos, Quaternion.identity);
+                        YellowEnemy yellow = instance.GetComponentInChildren<YellowEnemy>();
+                        CharacterList.Add(yellow);
+                    }
                     break;
                 default:
                     break;

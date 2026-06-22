@@ -1257,10 +1257,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06efa939bb73d754cbf70fda2dcc4128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
-  m_Player: {fileID: 6199856027936395095, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
-  m_RedEnemy: {fileID: 7241533869108087305, guid: d11b316eb2dfd84489b448733c183b85, type: 3}
-  m_YellowEnemy: {fileID: 7241533869108087305, guid: fca6dae12bd780c40a026f9bab6ec693, type: 3}
-  m_BlueEnemy: {fileID: 7241533869108087305, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
+  m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
+  m_RedEnemy: {fileID: 3644396506442443258, guid: d11b316eb2dfd84489b448733c183b85, type: 3}
+  m_YellowEnemy: {fileID: 7096615590219139109, guid: fca6dae12bd780c40a026f9bab6ec693, type: 3}
+  m_BlueEnemy: {fileID: 7005002337597356471, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
   m_TextManager: {fileID: 75159671}
   m_Status: {fileID: 8164064950549683773, guid: 25b6aae1f39523b4a8e2d3cdd75a1127, type: 3}
   CharacterList: []

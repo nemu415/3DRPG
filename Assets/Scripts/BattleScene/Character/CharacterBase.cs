@@ -22,6 +22,10 @@ public class CharacterBase : MonoBehaviour
 
     private bool m_IsSelectingItem = false;
 
+    private Animator animator;
+
+    private bool isPlaying = false;
+
     public enum MagicType
     {
         FIRE,
@@ -35,7 +39,7 @@ public class CharacterBase : MonoBehaviour
 
     private void Start()
     {
-
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -54,8 +58,14 @@ public class CharacterBase : MonoBehaviour
         {
             SelectItemEnd(ItemType.ESCAPE);
         }
-    }
 
+        if (isPlaying)
+        {
+            transform.localPosition = Vector3.zero;
+
+            isPlaying = false;
+        }
+    }
 
     public int GetHP() { return m_Hp; }
 
@@ -94,12 +104,15 @@ public class CharacterBase : MonoBehaviour
     public void Attack(CharacterBase opponent)
     {
         opponent.Damage(m_Power);
+        isPlaying = true;
+        animator.Play("AttackAnim", -1, 0f);
     }
 
     public void Magic(CharacterBase opponent)
     {
         opponent.Damage(m_Magic);
         m_Mp -= 5;
+        animator.Play("PlayerMagic", -1, 0f);
     }
 
     public void HPHeal(int heal)
