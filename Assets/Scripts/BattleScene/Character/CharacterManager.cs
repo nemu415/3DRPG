@@ -90,7 +90,6 @@ public class CharacterManager : MonoBehaviour
     private void CreateEnemy()
     {
         int enemyNum = Random.Range(1, 4);
-        enemyNum = 2;
 
         for (int i = 0;  i < enemyNum; i++)
         {

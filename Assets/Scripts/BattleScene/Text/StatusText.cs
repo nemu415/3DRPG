@@ -6,12 +6,6 @@ using UnityEngine.UI;
 
 public class StatusText : MonoBehaviour
 {
-    public static Slider hpSlider;
-    public static Slider mpSlider;
-
-    public Slider hpSliderInput;
-    public Slider mpSliderInput;
-
     private int m_Hp;
     private int m_Mp;
 
@@ -29,23 +23,6 @@ public class StatusText : MonoBehaviour
     public int GetHP() { return m_Hp; }
     public int GetMP() { return m_Mp; }
 
-    private void Awake()
-    {
-        GameObject hpBarObj = GameObject.Find("HPBar");
-        if (hpBarObj != null)
-        {
-            hpSlider = hpBarObj.GetComponent<Slider>();
-        }
-
-        GameObject mpBarObj = GameObject.Find("MPBar");
-        if (mpBarObj != null)
-        {
-            mpSlider = mpBarObj.GetComponent<Slider>();
-        }
-
-        hpSlider = hpSliderInput;
-        mpSlider = mpSliderInput;
-    }
 
     private void Start()
     {
@@ -54,8 +31,6 @@ public class StatusText : MonoBehaviour
 
     private void Update()
     {
-        if (hpSlider != null) hpSlider.value = m_Hp;
-        if (mpSlider != null) mpSlider.value = m_Mp;
     }
 
     public void SetStatus(int hp, int mp, string name)

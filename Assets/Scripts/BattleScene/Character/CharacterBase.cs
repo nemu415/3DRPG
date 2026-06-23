@@ -68,8 +68,9 @@ public class CharacterBase : MonoBehaviour
     }
 
     public int GetHP() { return m_Hp; }
-
     public int GetMP() { return m_Mp; }
+    public int GetMaxHP() { return m_MaxHp; }
+    public int GetMaxMP() { return m_MaxMp; }
 
     public int GetPower() { return m_Power; }
     public int GetMagic() { return m_Magic; }

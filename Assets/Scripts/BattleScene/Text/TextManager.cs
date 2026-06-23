@@ -7,6 +7,8 @@ public enum TextType
     MESSAGE_TEXT,
     STATUS_TEXT,
     ITEM_TEXT,
+    HP_GAUGE,
+    MP_GAUGE,
     TEXT_TYPE_MAX,
     TEXT_TYPE_NONE = -1
 };
@@ -28,6 +30,9 @@ public class TextManager : MonoBehaviour
     private StatusText m_StatusText;
 
     [SerializeField]
+    private Gauge m_Gauge;
+
+    [SerializeField]
     private ItemText m_ItemText;
 
     [SerializeField]
@@ -39,10 +44,11 @@ public class TextManager : MonoBehaviour
     [SerializeField]
     private CharacterManager m_CharacterManager;
 
-    
-
     List<StatusText> m_StatusTextList = new List<StatusText>();
 
+    List<Gauge> m_GaugeList = new List<Gauge>();
+    List<Gauge> m_HPGaugeList = new List<Gauge>();
+    List<Gauge> m_MPGaugeList = new List<Gauge>();
 
     private void Awake()
     {
@@ -73,6 +79,20 @@ public class TextManager : MonoBehaviour
 
             case TextType.ITEM_TEXT:
                 itemText.SetActive(true);
+                break;
+
+            case TextType.HP_GAUGE:
+                Gauge gauge = Instantiate(m_Gauge, canvasTarget, false);
+                m_GaugeList.Add(gauge);
+                m_HPGaugeList.Add(gauge);
+                SetGauge();
+                break;
+
+            case TextType.MP_GAUGE:
+                gauge = Instantiate(m_Gauge, canvasTarget, false);
+                m_GaugeList.Add(gauge);
+                m_MPGaugeList.Add(gauge);
+                SetGauge();
                 break;
 
             default:
@@ -128,15 +148,13 @@ public class TextManager : MonoBehaviour
 
             if (i == 0)
             {
-                // プレイヤー：右下に強制固定
                 uiRect.anchorMin = new Vector2(1f, 0f);
                 uiRect.anchorMax = new Vector2(1f, 0f);
                 uiRect.pivot = new Vector2(1f, 0f);
-                m_StatusTextList[i].SetPos(new Vector2(-20f, 20f));
+                m_StatusTextList[i].SetPos(new Vector2(-20f, 40f));
             }
             else
             {
-                // 敵：左上に順番に並べる
                 uiRect.anchorMin = new Vector2(0f, 1f);
                 uiRect.anchorMax = new Vector2(0f, 1f);
                 uiRect.pivot = new Vector2(0f, 1f);
@@ -145,7 +163,6 @@ public class TextManager : MonoBehaviour
                 float startX = 20f;
                 float startY = -20f;
 
-                // プレハブのサイズに依存しないよう、固定値(250幅)で絶対に横に引き離す
                 float xOffset = enemyIndex * 250f;
                 m_StatusTextList[i].SetPos(new Vector2(startX + xOffset, startY));
             }
@@ -176,6 +193,21 @@ public class TextManager : MonoBehaviour
                 Destroy(m_StatusTextList[i].gameObject);
                 m_StatusTextList.RemoveAt(i);
             }
+        }
+    }
+
+    public void SetGauge()
+    {
+        for (int i = 0; i < m_GaugeList.Count; i++)
+        {
+            if (m_HPGaugeList[i] == null || m_MPGaugeList[i] == null) continue;
+
+            CharacterBase character = m_CharacterManager.GetCharacterList()[i];
+
+            if (character == null) continue;
+
+            m_HPGaugeList[i].SetGauge(character);
+            m_MPGaugeList[i].SetGauge(character);
         }
     }
 

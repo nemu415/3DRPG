@@ -4,44 +4,35 @@ using UnityEngine.UIElements;
 
 public class Gauge : MonoBehaviour
 {
-    public enum GaugeType { HP, MP }
-    public GaugeType gaugeType;
-
-    private UnityEngine.UI.Slider slider;
-
     [SerializeField]
-    private StatusText m_StatusText;
+    private UnityEngine.UI.Image frame;
 
-    private void Start()
+    public void SetGauge(CharacterBase character)
     {
-        slider = GetComponent<UnityEngine.UI.Slider>();
+        int current, max = 0;
 
-        
-
-        if (slider != null)
+        if (this.gameObject.name == "HPGauge")
         {
-            slider.maxValue = (gaugeType == GaugeType.HP) ? m_StatusText.GetHP() : m_StatusText.GetMP();
+            current = character.GetHP();
+            max = character.GetMaxHP();
+
+            if (max <= 0) return;
+
+            float ratio = current / max;
+
+            frame.fillAmount = Mathf.Clamp01(ratio);
+        }
+        else if (this.gameObject.name == "MPGauge")
+        {
+            current = character.GetMP();
+            max = character.GetMaxMP();
+
+            if (max <= 0) return;
+
+            float ratio = current / max;
+
+            frame.fillAmount = Mathf.Clamp01(ratio);
         }
     }
-
-    private void Update()
-    {
-        if (slider == null)
-        {
-            // ”O‚Ì‚½‚ßA‚à‚¤ˆê“xŽæ“¾‚ðŽŽ‚Ý‚é
-            slider = GetComponent<UnityEngine.UI.Slider>();
-            if (slider == null) return;
-        }
-
-        if (gaugeType == GaugeType.HP)
-        {
-            slider.value = m_StatusText.GetHP();
-        }
-        else
-        {
-            slider.value = m_StatusText.GetMP();
-        }
-    }
-
 }
 
