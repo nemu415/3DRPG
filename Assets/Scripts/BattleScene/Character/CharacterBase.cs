@@ -24,8 +24,6 @@ public class CharacterBase : MonoBehaviour
 
     private Animator animator;
 
-    private bool isPlaying = false;
-
     public enum MagicType
     {
         FIRE,
@@ -59,12 +57,6 @@ public class CharacterBase : MonoBehaviour
             SelectItemEnd(ItemType.ESCAPE);
         }
 
-        if (isPlaying)
-        {
-            transform.localPosition = Vector3.zero;
-
-            isPlaying = false;
-        }
     }
 
     public int GetHP() { return m_Hp; }
@@ -105,7 +97,6 @@ public class CharacterBase : MonoBehaviour
     public void Attack(CharacterBase opponent)
     {
         opponent.Damage(m_Power);
-        isPlaying = true;
         animator.Play("AttackAnim", -1, 0f);
     }
 

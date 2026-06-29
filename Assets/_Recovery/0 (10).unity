@@ -237,7 +237,7 @@ MonoBehaviour:
   m_MessageText: {fileID: 7130582210074844826, guid: a3a0a822377d4c546aa3db607feda3e4, type: 3}
   m_StatusText: {fileID: -3568264992734311589, guid: 25b6aae1f39523b4a8e2d3cdd75a1127, type: 3}
   m_ItemText: {fileID: 872279969}
-  itemText: {fileID: 2066803108}
+  itemText: {fileID: 15838967947866787, guid: 05c7f94da228fc748a2043eb81bf68ec, type: 3}
   canvasTarget: {fileID: 75159670}
   m_HPBarRectList: []
   m_CharacterManager: {fileID: 6544191410174298819}

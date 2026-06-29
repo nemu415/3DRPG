@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public enum TextType
 {
@@ -30,9 +31,6 @@ public class TextManager : MonoBehaviour
     private StatusText m_StatusText;
 
     [SerializeField]
-    private Gauge m_Gauge;
-
-    [SerializeField]
     private ItemText m_ItemText;
 
     [SerializeField]
@@ -41,14 +39,19 @@ public class TextManager : MonoBehaviour
     [SerializeField]
     private Transform canvasTarget;
 
+    [SerializeField] private List<RectTransform> m_HPBarRectList = new List<RectTransform>();
+
+    private float maxBarWidth = 100f;
+
+    private MessageText m_ActiveMessage;
+
     [SerializeField]
     private CharacterManager m_CharacterManager;
 
     List<StatusText> m_StatusTextList = new List<StatusText>();
 
-    List<Gauge> m_GaugeList = new List<Gauge>();
-    List<Gauge> m_HPGaugeList = new List<Gauge>();
-    List<Gauge> m_MPGaugeList = new List<Gauge>();
+    [SerializeField] private GameObject m_HPGaugePrefab;
+    [SerializeField] private GameObject m_MPGaugePrefab;
 
     private void Awake()
     {
@@ -61,6 +64,11 @@ public class TextManager : MonoBehaviour
         m_PlayerStatusPos = new Vector2(360.0f, -170.0f);
         m_EnemyStatusPos = new Vector2(-250.0f, 200.0f);
         m_MessageTextPos = new Vector2(450.0f, 300.0f);
+
+        if (m_HPBarRectList.Count > 0 && m_HPBarRectList[0] != null)
+        {
+            maxBarWidth = m_HPBarRectList[0].rect.width;
+        }
     }
 
     public void CreateText(TextType type)
@@ -68,31 +76,34 @@ public class TextManager : MonoBehaviour
         switch (type)
         {
             case TextType.MESSAGE_TEXT:
+                // すでに画面に古いメッセージがあるなら削除（増殖防止）
+                if (m_ActiveMessage != null) Destroy(m_ActiveMessage.gameObject);
+
+                // 元のプレハブ(m_MessageText)から生成し、画面に表示中の実体(m_ActiveMessage)として保存する
+                m_ActiveMessage = Instantiate(m_MessageText, canvasTarget, false);
                 break;
 
             case TextType.STATUS_TEXT:
+                var charList = m_CharacterManager.GetCharacterList();
+                if (charList == null) return;
+
+                // 増殖防止の安全装置：すでにキャラクター数以上のテキストがあるなら生成しない
+                if (m_StatusTextList != null && m_StatusTextList.Count >= charList.Count)
+                {
+                    SetStatus();
+                    break;
+                }
+
+                // テキスト枠（親）を生成してリストに追加
                 StatusText text = Instantiate(m_StatusText, canvasTarget, false);
                 m_StatusTextList.Add(text);
-                SetStatusText();
+                SetStatusText(); // 配置位置の計算
+
                 SetStatus();
                 break;
 
             case TextType.ITEM_TEXT:
                 itemText.SetActive(true);
-                break;
-
-            case TextType.HP_GAUGE:
-                Gauge gauge = Instantiate(m_Gauge, canvasTarget, false);
-                m_GaugeList.Add(gauge);
-                m_HPGaugeList.Add(gauge);
-                SetGauge();
-                break;
-
-            case TextType.MP_GAUGE:
-                gauge = Instantiate(m_Gauge, canvasTarget, false);
-                m_GaugeList.Add(gauge);
-                m_MPGaugeList.Add(gauge);
-                SetGauge();
                 break;
 
             default:
@@ -121,18 +132,21 @@ public class TextManager : MonoBehaviour
 
     public void SetMessageText(string message)
     {
-        m_MessageText.SetText(message);
-
-        m_MessageText.SetPos(m_MessageTextPos);
+        if (m_ActiveMessage != null)
+        {
+            m_ActiveMessage.SetText(message);
+            m_ActiveMessage.SetPos(m_MessageTextPos);
+        }
 
     }
 
     public void AddMessageText(string message)
     {
-        m_MessageText.AddText(message);
-
-        m_MessageText.SetPos(m_MessageTextPos);
-
+        if (m_ActiveMessage != null)
+        {
+            m_ActiveMessage.AddText(message);
+            m_ActiveMessage.SetPos(m_MessageTextPos);
+        }
     }
 
     public void SetStatusText()
@@ -174,12 +188,11 @@ public class TextManager : MonoBehaviour
 
     public void SetStatus()
     {
-        for (int i = 0; i < m_StatusTextList.Count; i++)
+        for (int i = m_StatusTextList.Count - 1; i >= 0; i--)
         {
             if (m_StatusTextList[i] == null) continue;
 
             CharacterBase character = m_CharacterManager.GetCharacterList()[i];
-
             if (character == null) continue;
 
             int hp = character.GetHP();
@@ -191,23 +204,8 @@ public class TextManager : MonoBehaviour
             if (hp <= 0)
             {
                 Destroy(m_StatusTextList[i].gameObject);
-                m_StatusTextList.RemoveAt(i);
+                m_StatusTextList.RemoveAt(i); // 後ろから消せば番号がズレず、メモリ破壊が起きません
             }
-        }
-    }
-
-    public void SetGauge()
-    {
-        for (int i = 0; i < m_GaugeList.Count; i++)
-        {
-            if (m_HPGaugeList[i] == null || m_MPGaugeList[i] == null) continue;
-
-            CharacterBase character = m_CharacterManager.GetCharacterList()[i];
-
-            if (character == null) continue;
-
-            m_HPGaugeList[i].SetGauge(character);
-            m_MPGaugeList[i].SetGauge(character);
         }
     }
 

@@ -24,6 +24,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private CharacterManager m_CharacterManager;
 
+    
+
     [SerializeField]
     private MainCamera m_MainCamera;
 
@@ -77,7 +79,7 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
-        m_TextManager.SetStatus();
+        
     }
 
 
@@ -248,7 +250,7 @@ public class BattleManager : MonoBehaviour
 
                 currentCharacter.Action(finalAction, targetCharacter);
 
-                //m_TextManager.SetStatus();
+                m_TextManager.SetStatus();
 
                 yield return WaitForKeyInput();
             }
