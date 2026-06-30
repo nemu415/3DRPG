@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static ItemManager;
 
 public class CharacterBase : MonoBehaviour
 {
+    private const float MOVE_SPEED = 10f;
+    private const float ATTACK_DISTANCE_MIN = 1f;
     protected int m_MaxHp;
     protected int m_MaxMp;
     protected int m_AttackPercent;
@@ -19,10 +22,13 @@ public class CharacterBase : MonoBehaviour
     protected string m_Name;
     protected bool m_Acted;
     protected bool m_IsPlayer;
+    protected Vector3 m_DefaultPos;
 
     private bool m_IsSelectingItem = false;
 
     private Animator animator;
+
+    public bool IsAttacking { get; private set; } = false;
 
     public enum MagicType
     {
@@ -38,6 +44,8 @@ public class CharacterBase : MonoBehaviour
     private void Start()
     {
         animator = GetComponent<Animator>();
+
+        m_DefaultPos = transform.position;
     }
 
     private void Update()
@@ -94,10 +102,50 @@ public class CharacterBase : MonoBehaviour
         }
     }
 
-    public void Attack(CharacterBase opponent)
+    public IEnumerator Attack(CharacterBase opponent)
     {
+        IsAttacking = true;
+
+        float currectY = this.transform.position.y;
+        m_DefaultPos = this.transform.position;
+        m_DefaultPos.y = currectY;
+        Vector3 opponentPos = opponent.transform.position;
+        opponentPos.y = currectY;
+
+        while (true)
+        {
+            this.transform.position = Vector3.MoveTowards(this.transform.position, opponentPos, MOVE_SPEED * Time.deltaTime);
+
+            if (Vector3.Distance(this.transform.position, opponentPos) <= 1f)
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
         opponent.Damage(m_Power);
-        animator.Play("AttackAnim", -1, 0f);
+        TextManager.Instance.SetStatus();
+        yield return new WaitForSeconds(0.2f);
+
+        while (true)
+        {
+            Vector3 thisPos = this.transform.position;
+            float defaultDistance = Vector3.Distance(thisPos, m_DefaultPos);
+
+            this.transform.position = Vector3.MoveTowards(this.transform.position, m_DefaultPos, MOVE_SPEED * Time.deltaTime);
+
+            if (Vector3.Distance(this.transform.position, m_DefaultPos) <= 0.1f)
+            {
+                this.transform.position = m_DefaultPos;
+
+                break;
+            }
+
+            yield return null;
+        }
+        
+        IsAttacking = false;
     }
 
     public void Magic(CharacterBase opponent)
@@ -206,13 +254,13 @@ public class CharacterBase : MonoBehaviour
             case ActionType.ATTACK:
                 if (!m_IsPlayer)
                 {
-                    Attack(targetCharacter);
+                    StartCoroutine(Attack(targetCharacter));
                     TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！"
                         + "\n" + targetCharacter.GetName() + "に" + this.GetPower() + "ダメージ！");
                 }
                 else if (this.gameObject.CompareTag("Player"))
                 {
-                    Attack(targetCharacter);
+                    StartCoroutine(Attack(targetCharacter));
                     TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！"
                         + "\n" + targetCharacter.GetName() + "に" + this.GetPower() + "ダメージ！");
                 }

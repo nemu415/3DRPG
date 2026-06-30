@@ -22,14 +22,4 @@ public class Player : CharacterBase
         m_Acted = false;
         m_IsPlayer = true;
     }
-
-    void LateUpdate()
-    {
-        if (transform.hasChanged)
-        {
-            Debug.Log($"{gameObject.name} ‚ª“®‚«‚Ü‚µ‚½IŒ»İ‚ÌÀ•W: {transform.position}", gameObject);
-            transform.hasChanged = false;
-        }
-    }
-
 }

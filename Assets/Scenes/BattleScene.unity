@@ -1110,7 +1110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 018ea8c4099750e44b1d895e64855f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ManagerStarter
-  m_Player: {fileID: 4366816591016203794, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
+  m_Player: {fileID: -5435405231422926883, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
   m_CharacterManager: {fileID: 6544191410174298819}
   m_MainCamera: {fileID: 6544191410174298818}
   m_TextManager: {fileID: 75159671}
@@ -1138,7 +1138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06efa939bb73d754cbf70fda2dcc4128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
-  m_Player: {fileID: 6199856027936395095, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
+  m_Player: {fileID: 2758900460281132587, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
   m_RedEnemy: {fileID: 7241533869108087305, guid: d11b316eb2dfd84489b448733c183b85, type: 3}
   m_YellowEnemy: {fileID: 7241533869108087305, guid: fca6dae12bd780c40a026f9bab6ec693, type: 3}
   m_BlueEnemy: {fileID: 7241533869108087305, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}

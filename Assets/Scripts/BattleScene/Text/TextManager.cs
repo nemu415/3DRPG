@@ -188,23 +188,32 @@ public class TextManager : MonoBehaviour
 
     public void SetStatus()
     {
-        for (int i = m_StatusTextList.Count - 1; i >= 0; i--)
+        for (int i = 0; i < m_StatusTextList.Count; i++)
         {
+            // 既に破壊されている、または空の要素はスキップ
             if (m_StatusTextList[i] == null) continue;
 
-            CharacterBase character = m_CharacterManager.GetCharacterList()[i];
-            if (character == null) continue;
+            // キャラクター側のデータを確認
+            var characterList = m_CharacterManager.GetCharacterList();
+            if (i >= characterList.Count || characterList[i] == null) continue;
+
+            CharacterBase character = characterList[i];
 
             int hp = character.GetHP();
             int mp = character.GetMP();
             string name = character.GetName();
 
+            // ステータスの表示を即座に更新
             m_StatusTextList[i].SetStatus(hp, mp, name);
 
+            // もしHPが0以下（死亡）なら、テキストのオブジェクトを非表示（または削除）にする
             if (hp <= 0)
             {
+                // オブジェクトは画面から消すが、リストの[i]番目という「枠」は残す
                 Destroy(m_StatusTextList[i].gameObject);
-                m_StatusTextList.RemoveAt(i); // 後ろから消せば番号がズレず、メモリ破壊が起きません
+
+                // RemoveAt はせず、中身を null にして次回以降スキップさせる
+                m_StatusTextList[i] = null;
             }
         }
     }

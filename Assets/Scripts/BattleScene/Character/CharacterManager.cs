@@ -79,9 +79,9 @@ public class CharacterManager : MonoBehaviour
 
     private void CreatePlayer()
     {
-        Vector3 spawnPos = new Vector3(-3, 1.8f, 0);
+        Vector3 spawnPos = new Vector3(-3, 0.85f, 0);
 
-        GameObject instance = Instantiate(m_Player, spawnPos, Quaternion.identity);
+        GameObject instance = Instantiate(m_Player, spawnPos, Quaternion.Euler(0f, 90f, 0f));
         Player player = instance.GetComponentInChildren<Player>();
         CharacterList.Add(player);
         Debug.Log($"ê∂ê¨íºå„ÇÃç¿ïW: {instance.transform.position}");

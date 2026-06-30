@@ -250,6 +250,8 @@ public class BattleManager : MonoBehaviour
 
                 currentCharacter.Action(finalAction, targetCharacter);
 
+                yield return new WaitWhile(() => currentCharacter.IsAttacking);
+
                 m_TextManager.SetStatus();
 
                 yield return WaitForKeyInput();
