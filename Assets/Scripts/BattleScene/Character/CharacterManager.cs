@@ -79,7 +79,7 @@ public class CharacterManager : MonoBehaviour
 
     private void CreatePlayer()
     {
-        Vector3 spawnPos = new Vector3(-3, 0.85f, 0);
+        Vector3 spawnPos = new Vector3(-3, 2, 0);
 
         GameObject instance = Instantiate(m_Player, spawnPos, Quaternion.Euler(0f, 90f, 0f));
         Player player = instance.GetComponentInChildren<Player>();
@@ -90,10 +90,12 @@ public class CharacterManager : MonoBehaviour
     private void CreateEnemy()
     {
         int enemyNum = Random.Range(1, 4);
+        enemyNum = 4;
 
         for (int i = 0;  i < enemyNum; i++)
         {
             int enemyType = Random.Range(1, 4);
+            enemyType = i;
 
             Vector3 spawnPos = new Vector3(0, 0, 0);
 
@@ -103,7 +105,7 @@ public class CharacterManager : MonoBehaviour
             {
                 case 1:
                     {
-                        GameObject instance = Instantiate(m_RedEnemy, spawnPos, Quaternion.identity);
+                        GameObject instance = Instantiate(m_RedEnemy, spawnPos, Quaternion.Euler(0f, -90f, 0f));
                         RedEnemy red = instance.GetComponentInChildren<RedEnemy>();
                         CharacterList.Add(red);
                     }
@@ -117,7 +119,7 @@ public class CharacterManager : MonoBehaviour
                     break;
                 case 3:
                     {
-                        GameObject instance = Instantiate(m_YellowEnemy, spawnPos, Quaternion.identity);
+                        GameObject instance = Instantiate(m_YellowEnemy, spawnPos, Quaternion.Euler(0f, -90f, 0f));
                         YellowEnemy yellow = instance.GetComponentInChildren<YellowEnemy>();
                         CharacterList.Add(yellow);
                     }

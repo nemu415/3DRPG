@@ -7,6 +7,10 @@ public class Player : CharacterBase
     private static int m_PlayerMaxHp = 300;
     private static int m_PlayerMaxMp = 80;
 
+    protected override string MoveForwardAnimationName => "MoveFWD_Battle_RM_SwordAndShield";
+    protected override string MoveBackAnimationName => "MoveFWD_Battle_RM_SwordAndShield";
+    protected override string IdleAnimationName => "Wait";
+
     private void Awake()
     {
         m_MaxHp = m_PlayerMaxHp;

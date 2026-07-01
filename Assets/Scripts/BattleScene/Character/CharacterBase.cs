@@ -8,7 +8,7 @@ using static ItemManager;
 
 public class CharacterBase : MonoBehaviour
 {
-    private const float MOVE_SPEED = 10f;
+    private const float MOVE_SPEED = 5f;
     private const float ATTACK_DISTANCE_MIN = 1f;
     protected int m_MaxHp;
     protected int m_MaxMp;
@@ -27,6 +27,10 @@ public class CharacterBase : MonoBehaviour
     private bool m_IsSelectingItem = false;
 
     private Animator animator;
+
+    protected virtual string MoveForwardAnimationName => "DefaultMove";
+    protected virtual string MoveBackAnimationName => "DefaultMove";
+    protected virtual string IdleAnimationName => "DefaultIdle";
 
     public bool IsAttacking { get; private set; } = false;
 
@@ -112,6 +116,8 @@ public class CharacterBase : MonoBehaviour
         Vector3 opponentPos = opponent.transform.position;
         opponentPos.y = currectY;
 
+        animator.Play(MoveForwardAnimationName, -1, 0f);
+
         while (true)
         {
             this.transform.position = Vector3.MoveTowards(this.transform.position, opponentPos, MOVE_SPEED * Time.deltaTime);
@@ -128,6 +134,8 @@ public class CharacterBase : MonoBehaviour
         TextManager.Instance.SetStatus();
         yield return new WaitForSeconds(0.2f);
 
+        animator.Play(MoveBackAnimationName, -1, 0f);
+
         while (true)
         {
             Vector3 thisPos = this.transform.position;
@@ -138,6 +146,8 @@ public class CharacterBase : MonoBehaviour
             if (Vector3.Distance(this.transform.position, m_DefaultPos) <= 0.1f)
             {
                 this.transform.position = m_DefaultPos;
+
+                animator.Play(IdleAnimationName, -1, 0f);
 
                 break;
             }

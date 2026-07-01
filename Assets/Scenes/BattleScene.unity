@@ -1000,7 +1000,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -220, y: -167}
+  m_AnchoredPosition: {x: -250, y: -450}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &3016346963601244091
@@ -1139,8 +1139,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
   m_Player: {fileID: 2758900460281132587, guid: 4284259eda0315546a87afcb2cf539df, type: 3}
-  m_RedEnemy: {fileID: 7241533869108087305, guid: d11b316eb2dfd84489b448733c183b85, type: 3}
-  m_YellowEnemy: {fileID: 7241533869108087305, guid: fca6dae12bd780c40a026f9bab6ec693, type: 3}
+  m_RedEnemy: {fileID: 1321282720204005037, guid: f5cfeb9146a0d5947bd01d7639f9a085, type: 3}
+  m_YellowEnemy: {fileID: 278750747983604550, guid: 2ab7270d2d6218a4b96fdabcee8f831b, type: 3}
   m_BlueEnemy: {fileID: 7241533869108087305, guid: 26a0fdf98f1cf0f4d987085b60da13ad, type: 3}
   m_TextManager: {fileID: 75159671}
   m_Status: {fileID: 8164064950549683773, guid: 25b6aae1f39523b4a8e2d3cdd75a1127, type: 3}

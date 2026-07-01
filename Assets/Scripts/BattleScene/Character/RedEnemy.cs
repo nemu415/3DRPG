@@ -4,7 +4,11 @@ public class RedEnemy : CharacterBase
 {
     private static int m_RedMaxHp = 40;
     private static int m_RedMaxMp = 30;
-    private static int m_RedAttackPercant = 70;
+    private static int m_RedAttackPercant = 100;
+
+    protected override string MoveForwardAnimationName => "Mushroom_runFWDSmile";
+    protected override string MoveBackAnimationName => "Mushroom_walkBWDSmile";
+    protected override string IdleAnimationName => "Mushroom_IdleNormalSmile";
 
     private void Awake()
     {
