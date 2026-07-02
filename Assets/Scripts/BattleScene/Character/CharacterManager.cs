@@ -112,7 +112,7 @@ public class CharacterManager : MonoBehaviour
                     break;
                 case 2:
                     {
-                        GameObject instance = Instantiate(m_BlueEnemy, spawnPos, Quaternion.identity);
+                        GameObject instance = Instantiate(m_BlueEnemy, spawnPos, Quaternion.Euler(0f, -90f, 0f));
                         BlueEnemy blue = instance.GetComponentInChildren<BlueEnemy>();
                         CharacterList.Add(blue);
                     }

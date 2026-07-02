@@ -4,11 +4,14 @@ public class YellowEnemy : CharacterBase
 {
     private static int m_YellowMaxHp = 60;
     private static int m_YellowMaxMp = 20;
-    private static int m_YellowAttackPercant = 100;
+    private static int m_YellowAttackPercant = 0;
 
     protected override string MoveForwardAnimationName => "Cactus_RunFWD";
     protected override string MoveBackAnimationName => "Cactus_WalkBWD";
     protected override string IdleAnimationName => "Cactus_IdleNormal";
+    protected override string AttackAnimationName => "Cactus_Attack01";
+    protected override string MagicAnimationName => "Cactus_Attack02";
+    protected override string DamageAnimationName => "Cactus_GetHit";
 
     private void Awake()
     {

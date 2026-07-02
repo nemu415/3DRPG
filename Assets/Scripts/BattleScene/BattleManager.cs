@@ -250,7 +250,15 @@ public class BattleManager : MonoBehaviour
 
                 currentCharacter.Action(finalAction, targetCharacter);
 
-                yield return new WaitWhile(() => currentCharacter.IsAttacking);
+                if (finalAction == ActionType.ATTACK)
+                {
+                    yield return new WaitWhile(() => currentCharacter.IsAttacking);
+                }
+
+                else if (finalAction == ActionType.MAGIC)
+                {
+                    yield return new WaitWhile(() => currentCharacter.IsMagic);
+                }
 
                 m_TextManager.SetStatus();
 

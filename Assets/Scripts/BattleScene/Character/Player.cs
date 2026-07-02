@@ -7,9 +7,12 @@ public class Player : CharacterBase
     private static int m_PlayerMaxHp = 300;
     private static int m_PlayerMaxMp = 80;
 
-    protected override string MoveForwardAnimationName => "MoveFWD_Battle_RM_SwordAndShield";
-    protected override string MoveBackAnimationName => "MoveFWD_Battle_RM_SwordAndShield";
-    protected override string IdleAnimationName => "Wait";
+    protected override string MoveForwardAnimationName => "MoveFWD_Battle_InPlace_SwordAndShield";
+    protected override string MoveBackAnimationName => "MoveBWD_Battle_InPlace_SwordAndShield";
+    protected override string IdleAnimationName => "Idle_Battle_SwordAndShield";
+    protected override string AttackAnimationName => "Attack01_SwordAndShiled";
+    protected override string MagicAnimationName => "Attack04_Spinning_SwordAndShield";
+    protected override string DamageAnimationName => "GetHit01_SwordAndShield";
 
     private void Awake()
     {

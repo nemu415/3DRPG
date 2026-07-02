@@ -9,7 +9,7 @@ using static ItemManager;
 public class CharacterBase : MonoBehaviour
 {
     private const float MOVE_SPEED = 5f;
-    private const float ATTACK_DISTANCE_MIN = 1f;
+    private const float ATTACK_DISTANCE_MIN = 2.5f;
     protected int m_MaxHp;
     protected int m_MaxMp;
     protected int m_AttackPercent;
@@ -31,8 +31,12 @@ public class CharacterBase : MonoBehaviour
     protected virtual string MoveForwardAnimationName => "DefaultMove";
     protected virtual string MoveBackAnimationName => "DefaultMove";
     protected virtual string IdleAnimationName => "DefaultIdle";
+    protected virtual string AttackAnimationName => "DefaultAttack";
+    protected virtual string MagicAnimationName => "DefaultMagic";
+    protected virtual string DamageAnimationName => "DefaultDamage";
 
     public bool IsAttacking { get; private set; } = false;
+    public bool IsMagic { get; private set; } = false;
 
     public enum MagicType
     {
@@ -104,6 +108,10 @@ public class CharacterBase : MonoBehaviour
         {
             m_Hp = 0;
         }
+        else
+        {
+            animator.Play(DamageAnimationName, -1, 0f);
+        }
     }
 
     public IEnumerator Attack(CharacterBase opponent)
@@ -122,7 +130,7 @@ public class CharacterBase : MonoBehaviour
         {
             this.transform.position = Vector3.MoveTowards(this.transform.position, opponentPos, MOVE_SPEED * Time.deltaTime);
 
-            if (Vector3.Distance(this.transform.position, opponentPos) <= 1f)
+            if (Vector3.Distance(this.transform.position, opponentPos) <= ATTACK_DISTANCE_MIN)
             {
                 break;
             }
@@ -130,9 +138,14 @@ public class CharacterBase : MonoBehaviour
             yield return null;
         }
 
+        animator.Play(AttackAnimationName, -1, 0f);
         opponent.Damage(m_Power);
         TextManager.Instance.SetStatus();
-        yield return new WaitForSeconds(0.2f);
+        yield return null;
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        yield return new WaitForSeconds(stateInfo.length);
 
         animator.Play(MoveBackAnimationName, -1, 0f);
 
@@ -158,11 +171,21 @@ public class CharacterBase : MonoBehaviour
         IsAttacking = false;
     }
 
-    public void Magic(CharacterBase opponent)
+    public IEnumerator Magic(CharacterBase opponent)
     {
-        opponent.Damage(m_Magic);
+        IsMagic = true;
+
         m_Mp -= 5;
-        animator.Play("PlayerMagic", -1, 0f);
+        animator.Play(MagicAnimationName, -1, 0f);
+        opponent.Damage(m_Magic);
+        TextManager.Instance.SetStatus();
+        yield return null;
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        yield return new WaitForSeconds(stateInfo.length);
+
+        IsMagic = false;
     }
 
     public void HPHeal(int heal)
@@ -285,13 +308,13 @@ public class CharacterBase : MonoBehaviour
             case ActionType.MAGIC:
                 if (!m_IsPlayer)
                 {
-                    Magic(targetCharacter);
+                    StartCoroutine(Magic(targetCharacter));
                     TextManager.Instance.SetMessageText(this.GetName() + "の魔法！"
                         + "\n" + targetCharacter.GetName() + "に" + this.GetMagic() + "ダメージ！");
                 }
                 else if (this.gameObject.CompareTag("Player"))
                 {
-                    Magic(targetCharacter);
+                    StartCoroutine(Magic(targetCharacter));
                     TextManager.Instance.SetMessageText(this.GetName() + "の魔法！"
                         + "\n" + targetCharacter.GetName() + "に" + this.GetMagic() + "ダメージ！");
                 }
