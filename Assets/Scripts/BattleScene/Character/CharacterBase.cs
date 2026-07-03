@@ -5,9 +5,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static ItemManager;
+using static MagicSpawner;
 
 public class CharacterBase : MonoBehaviour
 {
+    private MagicSpawner magicSpawner;
+
     private const float MOVE_SPEED = 5f;
     private const float ATTACK_DISTANCE_MIN = 2.5f;
     protected int m_MaxHp;
@@ -100,7 +103,7 @@ public class CharacterBase : MonoBehaviour
 
     public void ActedReset() { m_Acted = false; }
 
-    public void Damage(int damage)
+    public IEnumerator Damage(int damage)
     {
         m_Hp -= damage;
 
@@ -108,10 +111,14 @@ public class CharacterBase : MonoBehaviour
         {
             m_Hp = 0;
         }
-        else
-        {
-            animator.Play(DamageAnimationName, -1, 0f);
-        }
+            
+        animator.Play(DamageAnimationName, -1, 0f);
+
+        yield return null;
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        yield return new WaitForSeconds(stateInfo.length);
     }
 
     public IEnumerator Attack(CharacterBase opponent)
@@ -139,7 +146,7 @@ public class CharacterBase : MonoBehaviour
         }
 
         animator.Play(AttackAnimationName, -1, 0f);
-        opponent.Damage(m_Power);
+        opponent.StartCoroutine(Damage(m_Power));
         TextManager.Instance.SetStatus();
         yield return null;
 
@@ -177,13 +184,21 @@ public class CharacterBase : MonoBehaviour
 
         m_Mp -= 5;
         animator.Play(MagicAnimationName, -1, 0f);
-        opponent.Damage(m_Magic);
+
+        if (magicSpawner == null)
+        {
+            magicSpawner = GameObject.FindAnyObjectByType<MagicSpawner>();
+        }
+        
         TextManager.Instance.SetStatus();
         yield return null;
 
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
         yield return new WaitForSeconds(stateInfo.length);
+
+        magicSpawner.PlayMagicEffect(opponent.transform.position);
+        opponent.StartCoroutine(Damage(m_Magic));
 
         IsMagic = false;
     }
