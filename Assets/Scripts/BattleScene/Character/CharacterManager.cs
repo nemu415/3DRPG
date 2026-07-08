@@ -61,10 +61,10 @@ public class CharacterManager : MonoBehaviour
         for (int i = 0; i < CharacterList.Count; i++)
         {
             CharacterBase character = CharacterList[i];
+            if (character == null) continue;
             if (character.GetHP() <= 0)
             {
-                character.Die();
-                CharacterList.RemoveAt(i);
+                StartCoroutine(character.Die());
             }
         }
     }
@@ -127,14 +127,6 @@ public class CharacterManager : MonoBehaviour
                 default:
                     break;
             }
-        }
-    }
-
-    public void CreateStatusText()
-    {
-        for (int i = 0; i < CharacterList.Count; i++)
-        {
-            m_TextManager.CreateText(TextType.STATUS_TEXT);
         }
     }
 

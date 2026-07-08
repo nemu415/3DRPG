@@ -2,6 +2,8 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
+using System.Linq;
 
 public enum TextType
 {
@@ -63,12 +65,108 @@ public class TextManager : MonoBehaviour
     {
         m_PlayerStatusPos = new Vector2(360.0f, -170.0f);
         m_EnemyStatusPos = new Vector2(-250.0f, 200.0f);
-        m_MessageTextPos = new Vector2(450.0f, 300.0f);
+        m_MessageTextPos = new Vector2(300.0f, 200.0f);
 
         if (m_HPBarRectList.Count > 0 && m_HPBarRectList[0] != null)
         {
             maxBarWidth = m_HPBarRectList[0].rect.width;
         }
+    }
+
+    public void CreateStatusText(int characterCount)
+    {
+        foreach (var ui in m_StatusTextList)
+        {
+            if (ui != null) Destroy(ui.gameObject);
+        }
+        m_StatusTextList.Clear();
+
+        for (int i = 0; i < characterCount; i++)
+        {
+            StatusText uiInstance = Instantiate(m_StatusText, canvasTarget, false);
+            m_StatusTextList.Add(uiInstance);
+
+            SetUIFixedPosition(uiInstance, i);
+        }
+    }
+
+    private void SetUIFixedPosition(StatusText ui, int index)
+    {
+        RectTransform rect = ui.GetComponent<RectTransform>();
+        if (rect == null) return;
+
+        if (index == 0)
+        {
+            rect.anchorMin = new Vector2(1f, 0);
+            rect.anchorMax = new Vector2(1f, 0);
+            rect.pivot = new Vector2(1f, 0);
+            ui.SetPos(new Vector2(-20f, 40f));
+        }
+        else
+        {
+            rect.anchorMin = new Vector2(0, 1f);
+            rect.anchorMax = new Vector2(0, 1f);
+            rect.pivot = new Vector2(0, 1f);
+
+            int enemyIndex = index - 1;
+            float startX = 20f;
+            float startY = -20f;
+            float xOffset = enemyIndex * 250f;
+
+            ui.SetPos(new Vector2(startX + xOffset, startY));
+        }
+
+        rect.transform.localScale = Vector3.one;
+        rect.transform.localPosition = new Vector3(rect.transform.localPosition.x, rect.transform.localPosition.y, 0);
+    }
+
+    public void RefreshStatus(List<CharacterBase> characterList)
+    {
+        if (characterList == null) return;
+
+        for (int i = 0; i < m_StatusTextList.Count; i++)
+        {
+            if (m_StatusTextList[i] == null || !m_StatusTextList[i]) continue;
+
+            StatusText currentUI = m_StatusTextList[i];
+
+            if (i >= characterList.Count || characterList[i] == null)
+            {
+                UpdateUIVisibility(currentUI.gameObject, true);
+                continue;
+            }
+
+            CharacterBase character = characterList[i];
+            int hp = character.GetHP();
+            int mp = character.GetMP();
+            string name = character.GetName();
+
+            if (hp <= 0 && !string.IsNullOrEmpty(name))
+            {
+                UpdateUIVisibility(currentUI.gameObject, false);
+            }
+            else
+            {
+                UpdateUIVisibility(currentUI.gameObject, true);
+                currentUI.SetStatus(hp, mp, name);
+            }
+        }
+    }
+
+    private void UpdateUIVisibility(GameObject targetObj, bool isVisible)
+    {
+        if (targetObj == null || !targetObj) return;
+
+        var canvasGroup = targetObj.GetComponent<CanvasGroup>();
+
+        if (canvasGroup == null)
+        {
+            targetObj.SetActive(isVisible);
+            return;
+        }
+
+        canvasGroup.alpha = isVisible ? 1f : 0f;
+        canvasGroup.blocksRaycasts = isVisible;
     }
 
     public void CreateText(TextType type)
@@ -90,16 +188,16 @@ public class TextManager : MonoBehaviour
                 // 増殖防止の安全装置：すでにキャラクター数以上のテキストがあるなら生成しない
                 if (m_StatusTextList != null && m_StatusTextList.Count >= charList.Count)
                 {
-                    SetStatus();
                     break;
                 }
 
                 // テキスト枠（親）を生成してリストに追加
                 StatusText text = Instantiate(m_StatusText, canvasTarget, false);
                 m_StatusTextList.Add(text);
+
+                ShowStatusUI(text.gameObject);
                 SetStatusText(); // 配置位置の計算
 
-                SetStatus();
                 break;
 
             case TextType.ITEM_TEXT:
@@ -188,33 +286,63 @@ public class TextManager : MonoBehaviour
 
     public void SetStatus()
     {
+        var characterList = m_CharacterManager.GetCharacterList();
+        if (characterList == null) return;
+
         for (int i = 0; i < m_StatusTextList.Count; i++)
-        {
-            // 既に破壊されている、または空の要素はスキップ
+        { 
             if (m_StatusTextList[i] == null) continue;
 
-            // キャラクター側のデータを確認
-            var characterList = m_CharacterManager.GetCharacterList();
-            if (i >= characterList.Count || characterList[i] == null) continue;
-
+            if (i >= characterList.Count || characterList[i] == null)
+            {
+                continue;
+            }
+           
             CharacterBase character = characterList[i];
-
             int hp = character.GetHP();
             int mp = character.GetMP();
             string name = character.GetName();
 
-            // ステータスの表示を即座に更新
             m_StatusTextList[i].SetStatus(hp, mp, name);
 
-            // もしHPが0以下（死亡）なら、テキストのオブジェクトを非表示（または削除）にする
             if (hp <= 0)
             {
-                // オブジェクトは画面から消すが、リストの[i]番目という「枠」は残す
-                Destroy(m_StatusTextList[i].gameObject);
-
-                // RemoveAt はせず、中身を null にして次回以降スキップさせる
-                m_StatusTextList[i] = null;
+                HideStatusUI(m_StatusTextList[i].gameObject);
             }
+            else
+            {
+                m_StatusTextList[i].SetStatus(hp, mp, name);
+                ShowStatusUI(m_StatusTextList[i].gameObject);
+            }
+        }
+    }
+ 
+
+    private void HideStatusUI(GameObject targetObj)
+    {
+        var canvasGroup = targetObj.GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.blocksRaycasts = false;
+        }
+        else
+        {
+            targetObj.SetActive(false);
+        }
+    }
+
+    private void ShowStatusUI(GameObject targetObj)
+    {
+        var canvasGroup = targetObj?.GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
+        }
+        else
+        {
+            targetObj.SetActive(true);
         }
     }
 

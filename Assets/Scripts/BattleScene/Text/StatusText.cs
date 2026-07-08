@@ -11,9 +11,6 @@ public class StatusText : MonoBehaviour
 
     private string m_Name;
 
-    [SerializeField]
-    private Player m_Player;
-
     //[SerializeField]
     //private Enemy m_Enemy;
 
@@ -50,7 +47,11 @@ public class StatusText : MonoBehaviour
 
         if (rectTransform == null) return;
 
+        Vector2 originalSize = rectTransform.sizeDelta;
+
         rectTransform.anchoredPosition = targetPosition;
+
+        rectTransform.sizeDelta = originalSize;
     }
 }
 

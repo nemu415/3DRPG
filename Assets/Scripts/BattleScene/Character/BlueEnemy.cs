@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BlueEnemy : CharacterBase
 {
-    private static int m_BlueMaxHp = 50;
+    private static int m_BlueMaxHp = 5;
     private static int m_BlueMaxMp = 50;
     private static int m_BlueAttackPercant = 0;
 
@@ -12,6 +12,7 @@ public class BlueEnemy : CharacterBase
     protected override string AttackAnimationName => "Attack01";
     protected override string MagicAnimationName => "Attack02";
     protected override string DamageAnimationName => "GetHit";
+    protected override string DieAnimationName => "Die";
 
     private void Awake()
     {

@@ -60,9 +60,11 @@ public class BattleManager : MonoBehaviour
         //Task TakeTurn();
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         m_CharacterManager.CreateCharacter();
+
+        yield return null;
 
         CharacterBase enemy = m_CharacterManager.GetCharacterList()[1];
 
@@ -71,6 +73,11 @@ public class BattleManager : MonoBehaviour
         m_TextManager.CreateText(TextType.MESSAGE_TEXT);
         //m_TextManager.SetMessageText("");
         m_TextManager.SetMessageText(enemyName + "Ç™åªÇÍÇΩÅI");
+
+        yield return WaitForKeyInput();
+
+        m_TextManager.CreateStatusText(m_CharacterManager.GetCharacterList().Count);
+        m_TextManager.RefreshStatus(m_CharacterManager.GetCharacterList());
 
         turnOrder = CharacterList.OfType<IBattleCharacter>().OrderByDescending(c => c.Speed).ToList();
 
@@ -105,8 +112,6 @@ public class BattleManager : MonoBehaviour
     private void BattleStart()
     {
         m_MainCamera.BattleStart();
-
-        m_CharacterManager.CreateStatusText();
     }
 
     IEnumerator CharacterAction()
@@ -238,13 +243,13 @@ public class BattleManager : MonoBehaviour
 
                     int attackPercent = currentCharacter.GetAttackPercent();
                     int border = Random.Range(0, 100);
-                    if (attackPercent > border)
+                    if (attackPercent < border && currentCharacter.GetMP() > 0)
                     {
-                        finalAction = ActionType.ATTACK;
+                        finalAction = ActionType.MAGIC;
                     }
                     else
                     {
-                        finalAction = ActionType.MAGIC;
+                        finalAction = ActionType.ATTACK;
                     }
                 }
 
@@ -263,28 +268,45 @@ public class BattleManager : MonoBehaviour
                 m_TextManager.SetStatus();
 
                 yield return WaitForKeyInput();
+
+                bool playerAlive = false;
+
+                for (int j = 0; j < sortedCharacterList.Count; j++)
+                {
+                    if (sortedCharacterList[i].IsPlayer())
+                    {
+                        playerAlive = true;
+                    }
+                }
+
+                if (!playerAlive)
+                {
+                    StartCoroutine(Lose());
+
+                    yield break;
+                }
             }
         }
 
-        StartCoroutine(BattleEnd());
+        StartCoroutine(Win());
 
         yield break;
     }
 
-    private IEnumerator BattleEnd()
+    private IEnumerator Win()
     {
-        List<CharacterBase> characterList = new List<CharacterBase>();
+        m_TextManager.SetMessageText("èüóò");
 
-        characterList = m_CharacterManager.GetCharacterList();
+        yield return WaitForKeyInput();
 
-        if (characterList[0].IsPlayer())
-        {
-            m_TextManager.SetMessageText("èüóò");
-        }
-        else
-        {
-            m_TextManager.SetMessageText("îsñk");
-        }
+        SceneManager.LoadScene("SoshiKurosawa");
+
+        yield break;
+    }
+
+    private IEnumerator Lose()
+    {
+        m_TextManager.SetMessageText("îsñk");
 
         yield return WaitForKeyInput();
 

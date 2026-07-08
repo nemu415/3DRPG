@@ -5,11 +5,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static ItemManager;
-using static MagicSpawner;
+using static EffectSpawner;
 
 public class CharacterBase : MonoBehaviour
 {
-    private MagicSpawner magicSpawner;
+    private EffectSpawner effectSpawner;
 
     private const float MOVE_SPEED = 5f;
     private const float ATTACK_DISTANCE_MIN = 2.5f;
@@ -37,6 +37,7 @@ public class CharacterBase : MonoBehaviour
     protected virtual string AttackAnimationName => "DefaultAttack";
     protected virtual string MagicAnimationName => "DefaultMagic";
     protected virtual string DamageAnimationName => "DefaultDamage";
+    protected virtual string DieAnimationName => "DefaultDie";
 
     public bool IsAttacking { get; private set; } = false;
     public bool IsMagic { get; private set; } = false;
@@ -103,6 +104,18 @@ public class CharacterBase : MonoBehaviour
 
     public void ActedReset() { m_Acted = false; }
 
+    private IEnumerator WaitForAnimation(string animationName)
+    {
+        yield return null;
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (stateInfo.IsName(animationName))
+        {
+            yield return new WaitForSeconds(stateInfo.length);
+        }
+    }
+
     public IEnumerator Damage(int damage)
     {
         m_Hp -= damage;
@@ -114,67 +127,48 @@ public class CharacterBase : MonoBehaviour
             
         animator.Play(DamageAnimationName, -1, 0f);
 
-        yield return null;
-
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-        yield return new WaitForSeconds(stateInfo.length);
+       yield return StartCoroutine(WaitForAnimation(DamageAnimationName));
     }
 
     public IEnumerator Attack(CharacterBase opponent)
     {
         IsAttacking = true;
 
-        float currectY = this.transform.position.y;
+        float currentY = this.transform.position.y;
         m_DefaultPos = this.transform.position;
-        m_DefaultPos.y = currectY;
+        m_DefaultPos.y = currentY;
         Vector3 opponentPos = opponent.transform.position;
-        opponentPos.y = currectY;
+        opponentPos.y = currentY;
 
         animator.Play(MoveForwardAnimationName, -1, 0f);
 
-        while (true)
+        while (Vector3.Distance(this.transform.position, opponentPos) > ATTACK_DISTANCE_MIN)
         {
             this.transform.position = Vector3.MoveTowards(this.transform.position, opponentPos, MOVE_SPEED * Time.deltaTime);
-
-            if (Vector3.Distance(this.transform.position, opponentPos) <= ATTACK_DISTANCE_MIN)
-            {
-                break;
-            }
 
             yield return null;
         }
 
         animator.Play(AttackAnimationName, -1, 0f);
-        opponent.StartCoroutine(Damage(m_Power));
+
+        yield return opponent.StartCoroutine(opponent.Damage(m_Power));
+
         TextManager.Instance.SetStatus();
-        yield return null;
-
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-        yield return new WaitForSeconds(stateInfo.length);
+        yield return StartCoroutine(WaitForAnimation(AttackAnimationName));
 
         animator.Play(MoveBackAnimationName, -1, 0f);
 
-        while (true)
+        while (Vector3.Distance(this.transform.position, m_DefaultPos) > 0.1f)
         {
-            Vector3 thisPos = this.transform.position;
-            float defaultDistance = Vector3.Distance(thisPos, m_DefaultPos);
-
             this.transform.position = Vector3.MoveTowards(this.transform.position, m_DefaultPos, MOVE_SPEED * Time.deltaTime);
-
-            if (Vector3.Distance(this.transform.position, m_DefaultPos) <= 0.1f)
-            {
-                this.transform.position = m_DefaultPos;
-
-                animator.Play(IdleAnimationName, -1, 0f);
-
-                break;
-            }
-
+           
             yield return null;
         }
-        
+
+        this.transform.position = m_DefaultPos;
+
+        animator.Play(IdleAnimationName, -1, 0f);
+
         IsAttacking = false;
     }
 
@@ -185,26 +179,31 @@ public class CharacterBase : MonoBehaviour
         m_Mp -= 5;
         animator.Play(MagicAnimationName, -1, 0f);
 
-        if (magicSpawner == null)
+        if (effectSpawner == null)
         {
-            magicSpawner = GameObject.FindAnyObjectByType<MagicSpawner>();
+            effectSpawner = GameObject.FindAnyObjectByType<EffectSpawner>();
         }
         
         TextManager.Instance.SetStatus();
-        yield return null;
+        yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
 
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        effectSpawner.PlayMagicEffect(EffectType.RED_MAGIC, opponent.transform.position);
+        yield return opponent.StartCoroutine(opponent.Damage(m_Magic));
 
-        yield return new WaitForSeconds(stateInfo.length);
-
-        magicSpawner.PlayMagicEffect(opponent.transform.position);
-        opponent.StartCoroutine(Damage(m_Magic));
+        animator.Play(IdleAnimationName, -1, 0f);
 
         IsMagic = false;
     }
 
     public void HPHeal(int heal)
     {
+        if (effectSpawner == null)
+        {
+            effectSpawner = GameObject.FindAnyObjectByType<EffectSpawner>();
+        }
+
+        effectSpawner.PlayMagicEffect(EffectType.HP_HEAL, this.transform.position);
+
         m_Hp += heal;
 
         if (m_Hp > m_MaxHp)
@@ -215,6 +214,13 @@ public class CharacterBase : MonoBehaviour
 
     public void MPHeal(int heal)
     {
+        if (effectSpawner == null)
+        {
+            effectSpawner = GameObject.FindAnyObjectByType<EffectSpawner>();
+        }
+
+        effectSpawner.PlayMagicEffect(EffectType.MP_HEAL, this.transform.position);
+
         m_Mp += heal;
 
         if (m_Mp > m_MaxMp)
@@ -225,8 +231,6 @@ public class CharacterBase : MonoBehaviour
 
     public void Escape()
     {
-        //Debug.Log("escape");
-
         int rand = Random.Range(1, 100);
 
         int playerSpeed = 0;
@@ -258,6 +262,8 @@ public class CharacterBase : MonoBehaviour
         if (rand > border)
         {
             TextManager.Instance.SetMessageText("ì¶Ç∞êÿÇÍÇΩÅI");
+
+            effectSpawner.PlayMagicEffect(EffectType.ESCAPE, this.transform.position);
 
             SceneManager.LoadScene("SoshiKurosawa");
         }
@@ -371,8 +377,12 @@ public class CharacterBase : MonoBehaviour
         TextManager.Instance.DeleteText(TextType.ITEM_TEXT);
     }
 
-    public void Die()
+    public IEnumerator Die()
     {
+        animator.Play(DieAnimationName, -1, 0f);
+
+        yield return StartCoroutine(WaitForAnimation(DieAnimationName));
+
         Destroy(gameObject);
 
     }

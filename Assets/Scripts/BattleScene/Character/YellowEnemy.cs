@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class YellowEnemy : CharacterBase
 {
-    private static int m_YellowMaxHp = 60;
-    private static int m_YellowMaxMp = 20;
+    private static int m_YellowMaxHp = 5;
+    private static int m_YellowMaxMp = 10;
     private static int m_YellowAttackPercant = 0;
 
     protected override string MoveForwardAnimationName => "Cactus_RunFWD";
@@ -12,6 +12,7 @@ public class YellowEnemy : CharacterBase
     protected override string AttackAnimationName => "Cactus_Attack01";
     protected override string MagicAnimationName => "Cactus_Attack02";
     protected override string DamageAnimationName => "Cactus_GetHit";
+    protected override string DieAnimationName => "Cactus_Die";
 
     private void Awake()
     {

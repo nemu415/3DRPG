@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class RedEnemy : CharacterBase
 {
-    private static int m_RedMaxHp = 40;
+    private static int m_RedMaxHp = 5;
     private static int m_RedMaxMp = 30;
     private static int m_RedAttackPercant = 0;
 
@@ -12,6 +12,7 @@ public class RedEnemy : CharacterBase
     protected override string AttackAnimationName => "Mushroom_Attack01Smile";
     protected override string MagicAnimationName => "Mushroom_Attack02Smile";
     protected override string DamageAnimationName => "Mushroom_GetHitSmile";
+    protected override string DieAnimationName => "Mushroom_DieSmile";
 
 
     private void Awake()
