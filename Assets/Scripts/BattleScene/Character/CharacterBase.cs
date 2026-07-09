@@ -25,6 +25,8 @@ public class CharacterBase : MonoBehaviour
     protected string m_Name;
     protected bool m_Acted;
     protected bool m_IsPlayer;
+    protected bool m_Alive;
+    protected bool m_IsPoisoned;
     protected Vector3 m_DefaultPos;
 
     private bool m_IsSelectingItem = false;
@@ -58,6 +60,9 @@ public class CharacterBase : MonoBehaviour
         animator = GetComponent<Animator>();
 
         m_DefaultPos = transform.position;
+
+        m_Alive = true;
+        m_IsPoisoned = false;
     }
 
     private void Update()
@@ -95,6 +100,8 @@ public class CharacterBase : MonoBehaviour
 
     public bool IsPlayer() { return m_IsPlayer; }
 
+    public bool IsPoisoned() { return m_IsPoisoned; }
+
     public int GetAttackPercent()
     {
         return m_AttackPercent;
@@ -120,14 +127,24 @@ public class CharacterBase : MonoBehaviour
     {
         m_Hp -= damage;
 
-        if (m_Hp < 0)
+        if (m_Hp <= 0)
         {
             m_Hp = 0;
-        }
-            
-        animator.Play(DamageAnimationName, -1, 0f);
 
-       yield return StartCoroutine(WaitForAnimation(DamageAnimationName));
+            m_Alive = false;
+
+            animator.Play(DieAnimationName, -1, 0f);
+
+            yield return StartCoroutine(WaitForAnimation(DieAnimationName));
+
+            Destroy(gameObject);
+        }
+        else
+        {
+            animator.Play(DamageAnimationName, -1, 0f);
+
+            yield return StartCoroutine(WaitForAnimation(DamageAnimationName));
+        }
     }
 
     public IEnumerator Attack(CharacterBase opponent)
@@ -375,16 +392,5 @@ public class CharacterBase : MonoBehaviour
         m_IsSelectingItem = false;
         UseItem(type);
         TextManager.Instance.DeleteText(TextType.ITEM_TEXT);
-    }
-
-    public IEnumerator Die()
-    {
-        animator.Play(DieAnimationName, -1, 0f);
-
-        yield return StartCoroutine(WaitForAnimation(DieAnimationName));
-
-        Destroy(gameObject);
-
-    }
-    
+    }    
 }

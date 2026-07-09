@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RedEnemy : CharacterBase
+public class Mashroom : CharacterBase
 {
     private static int m_RedMaxHp = 5;
     private static int m_RedMaxMp = 30;
@@ -27,7 +27,7 @@ public class RedEnemy : CharacterBase
         m_Magic = 13;
         m_Speed = 7;
         m_MagicType = MagicType.FIRE;
-        m_Name = "RedEnemy";
+        m_Name = "ÉLÉmÉR";
         m_Acted = false;
     }
 }

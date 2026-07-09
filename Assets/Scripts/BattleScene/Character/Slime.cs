@@ -1,6 +1,8 @@
+using System.Xml.Linq;
 using UnityEngine;
+using static CharacterBase;
 
-public class BlueEnemy : CharacterBase
+public class Slime : CharacterBase
 {
     private static int m_BlueMaxHp = 5;
     private static int m_BlueMaxMp = 50;
@@ -26,7 +28,7 @@ public class BlueEnemy : CharacterBase
         m_Magic = 8;
         m_Speed = 12;
         m_MagicType = MagicType.WATER;
-        m_Name = "BlueEnemy";
+        m_Name = "ƒXƒ‰ƒCƒ€";
         m_Acted = false;
     }
 }

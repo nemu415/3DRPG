@@ -71,7 +71,7 @@ public class BattleManager : MonoBehaviour
         string enemyName = enemy.GetName();
 
         m_TextManager.CreateText(TextType.MESSAGE_TEXT);
-        //m_TextManager.SetMessageText("");
+
         m_TextManager.SetMessageText(enemyName + "Ç™åªÇÍÇΩÅI");
 
         yield return WaitForKeyInput();
@@ -102,7 +102,7 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator BattleFlow()
     {
-        yield return WaitForKeyInput();
+        yield return null;
 
         BattleStart();
 
@@ -186,17 +186,26 @@ public class BattleManager : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.Alpha1))
                     {
                         playerTargetCharacter = m_CharacterManager.GetCharacterList()[1];
-                        targetSelected = true;
+                        if (playerTargetCharacter != null)
+                        {
+                            targetSelected = true;
+                        }
                     }
                     else if (Input.GetKeyDown(KeyCode.Alpha2))
                     {
                         playerTargetCharacter = m_CharacterManager.GetCharacterList()[2];
-                        targetSelected = true;
+                        if (playerTargetCharacter != null)
+                        {
+                            targetSelected = true;
+                        }
                     }
                     else if (Input.GetKeyDown(KeyCode.Alpha3))
                     {
                         playerTargetCharacter = m_CharacterManager.GetCharacterList()[3];
-                        targetSelected = true;
+                        if (playerTargetCharacter != null)
+                        {
+                            targetSelected = true;
+                        }
                     }
 
                     yield return null;
@@ -270,12 +279,22 @@ public class BattleManager : MonoBehaviour
                 yield return WaitForKeyInput();
 
                 bool playerAlive = false;
+                bool anyEnemyAlive = false; ;
 
                 for (int j = 0; j < sortedCharacterList.Count; j++)
                 {
-                    if (sortedCharacterList[i].IsPlayer())
+                    if (sortedCharacterList[j].GetHP() <= 0) continue;
+
+                    Debug.Log(sortedCharacterList.Count);
+
+                    if (sortedCharacterList[j].IsPlayer())
                     {
                         playerAlive = true;
+                    }
+                    else
+                    {
+                        anyEnemyAlive = true;
+                        
                     }
                 }
 
@@ -285,10 +304,25 @@ public class BattleManager : MonoBehaviour
 
                     yield break;
                 }
+
+                if (!anyEnemyAlive)
+                {
+                    StartCoroutine(Win());
+
+                    yield break;
+                }
+            }
+
+            for (int i = 0; i < sortedCharacterList.Count; i++)
+            {
+                if (!sortedCharacterList[i].IsPoisoned())
+                {
+                    sortedCharacterList[i].Damage(5);
+                }
             }
         }
 
-        StartCoroutine(Win());
+        
 
         yield break;
     }

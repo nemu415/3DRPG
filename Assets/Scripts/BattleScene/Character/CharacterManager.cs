@@ -28,13 +28,16 @@ public class CharacterManager : MonoBehaviour
     private GameObject m_Player;
 
     [SerializeField]
-    private GameObject m_RedEnemy;
+    private GameObject m_Mashroom;
 
     [SerializeField]
-    private GameObject m_YellowEnemy;
+    private GameObject m_Cactus;
 
     [SerializeField]
-    private GameObject m_BlueEnemy;
+    private GameObject m_Shell;
+
+    [SerializeField]
+    private GameObject m_Slime;
 
     [SerializeField]
     private TextManager m_TextManager;
@@ -54,22 +57,7 @@ public class CharacterManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    private void Update()
-    {
-        for (int i = 0; i < CharacterList.Count; i++)
-        {
-            CharacterBase character = CharacterList[i];
-            if (character == null) continue;
-            if (character.GetHP() <= 0)
-            {
-                StartCoroutine(character.Die());
-            }
-        }
-    }
-
-    
+    }    
 
     public void CreateCharacter()
     {
@@ -84,6 +72,7 @@ public class CharacterManager : MonoBehaviour
         GameObject instance = Instantiate(m_Player, spawnPos, Quaternion.Euler(0f, 90f, 0f));
         Player player = instance.GetComponentInChildren<Player>();
         CharacterList.Add(player);
+        player.IsPlayer();
         Debug.Log($"ê∂ê¨íºå„ÇÃç¿ïW: {instance.transform.position}");
     }
 
@@ -94,7 +83,7 @@ public class CharacterManager : MonoBehaviour
 
         for (int i = 0;  i < enemyNum; i++)
         {
-            int enemyType = Random.Range(1, 4);
+            int enemyType = Random.Range(1, 5);
             enemyType = i;
 
             Vector3 spawnPos = new Vector3(0, 0, 0);
@@ -105,23 +94,30 @@ public class CharacterManager : MonoBehaviour
             {
                 case 1:
                     {
-                        GameObject instance = Instantiate(m_RedEnemy, spawnPos, Quaternion.Euler(0f, -90f, 0f));
-                        RedEnemy red = instance.GetComponentInChildren<RedEnemy>();
-                        CharacterList.Add(red);
+                        GameObject instance = Instantiate(m_Mashroom, spawnPos, Quaternion.Euler(0f, -90f, 0f));
+                        Mashroom mashroom = instance.GetComponentInChildren<Mashroom>();
+                        CharacterList.Add(mashroom);
                     }
                     break;
                 case 2:
                     {
-                        GameObject instance = Instantiate(m_BlueEnemy, spawnPos, Quaternion.Euler(0f, -90f, 0f));
-                        BlueEnemy blue = instance.GetComponentInChildren<BlueEnemy>();
-                        CharacterList.Add(blue);
+                        GameObject instance = Instantiate(m_Shell, spawnPos, Quaternion.Euler(0f, -90f, 0f));
+                        Shell shell = instance.GetComponentInChildren<Shell>();
+                        CharacterList.Add(shell);
                     }
                     break;
                 case 3:
                     {
-                        GameObject instance = Instantiate(m_YellowEnemy, spawnPos, Quaternion.Euler(0f, -90f, 0f));
-                        YellowEnemy yellow = instance.GetComponentInChildren<YellowEnemy>();
-                        CharacterList.Add(yellow);
+                        GameObject instance = Instantiate(m_Cactus, spawnPos, Quaternion.Euler(0f, -90f, 0f));
+                        Cactus cactus = instance.GetComponentInChildren<Cactus>();
+                        CharacterList.Add(cactus);
+                    }
+                    break;
+                case 4:
+                    {
+                        GameObject instance = Instantiate(m_Slime, spawnPos, Quaternion.Euler(0f, -90f, 0f));
+                        Slime slime = instance.GetComponentInChildren<Slime>();
+                        CharacterList.Add(slime);
                     }
                     break;
                 default:

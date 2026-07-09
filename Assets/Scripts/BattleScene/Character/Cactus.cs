@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class YellowEnemy : CharacterBase
+public class Cactus : CharacterBase
 {
     private static int m_YellowMaxHp = 5;
     private static int m_YellowMaxMp = 10;
@@ -26,7 +26,7 @@ public class YellowEnemy : CharacterBase
         m_Magic = 10;
         m_Speed = 10;
         m_MagicType = MagicType.THUNDER;
-        m_Name = "YellowEnemy";
+        m_Name = "ƒTƒ{ƒeƒ“";
         m_Acted = false;
     }
 }
