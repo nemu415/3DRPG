@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Shell : CharacterBase
 {
-    private static int m_BlueMaxHp = 5;
+    private static int m_BlueMaxHp = 50;
     private static int m_BlueMaxMp = 50;
     private static int m_BlueAttackPercant = 0;
 
@@ -23,7 +23,7 @@ public class Shell : CharacterBase
         m_Hp = m_MaxHp;
         m_Mp = m_MaxMp;
         m_Power = 4;
-        m_Magic = 8;
+        m_Magic = 10;
         m_Speed = 12;
         m_MagicType = MagicType.WATER;
         m_Name = "ƒgƒQ‚±‚¤‚ç";

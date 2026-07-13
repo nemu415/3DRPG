@@ -79,12 +79,12 @@ public class CharacterManager : MonoBehaviour
     private void CreateEnemy()
     {
         int enemyNum = Random.Range(1, 4);
-        enemyNum = 4;
+        enemyNum = 2;
 
         for (int i = 0;  i < enemyNum; i++)
         {
             int enemyType = Random.Range(1, 5);
-            enemyType = i;
+            enemyType = i + 1;
 
             Vector3 spawnPos = new Vector3(0, 0, 0);
 

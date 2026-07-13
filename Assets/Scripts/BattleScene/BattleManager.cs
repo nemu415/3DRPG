@@ -285,8 +285,6 @@ public class BattleManager : MonoBehaviour
                 {
                     if (sortedCharacterList[j].GetHP() <= 0) continue;
 
-                    Debug.Log(sortedCharacterList.Count);
-
                     if (sortedCharacterList[j].IsPlayer())
                     {
                         playerAlive = true;

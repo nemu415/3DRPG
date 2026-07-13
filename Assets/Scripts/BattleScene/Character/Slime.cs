@@ -25,9 +25,9 @@ public class Slime : CharacterBase
         m_Hp = m_MaxHp;
         m_Mp = m_MaxMp;
         m_Power = 4;
-        m_Magic = 8;
+        m_Magic = 10;
         m_Speed = 12;
-        m_MagicType = MagicType.WATER;
+        m_MagicType = MagicType.FIRE;
         m_Name = "ƒXƒ‰ƒCƒ€";
         m_Acted = false;
     }

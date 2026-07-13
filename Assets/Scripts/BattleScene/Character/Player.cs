@@ -4,7 +4,7 @@ using static BattleManager;
 
 public class Player : CharacterBase
 {
-    private static int m_PlayerMaxHp = 5;
+    private static int m_PlayerMaxHp = 50;
     private static int m_PlayerMaxMp = 80;
 
     protected override string MoveForwardAnimationName => "MoveFWD_Battle_InPlace_SwordAndShield";

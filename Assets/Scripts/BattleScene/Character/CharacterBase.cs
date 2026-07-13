@@ -50,6 +50,7 @@ public class CharacterBase : MonoBehaviour
         WATER,
         THUNDER,
         HEAL,
+        MAGIC_TYPE_MAX,
     }
 
     protected MagicType m_MagicType;
@@ -81,7 +82,6 @@ public class CharacterBase : MonoBehaviour
         {
             SelectItemEnd(ItemType.ESCAPE);
         }
-
     }
 
     public int GetHP() { return m_Hp; }
@@ -107,6 +107,11 @@ public class CharacterBase : MonoBehaviour
         return m_AttackPercent;
     }
 
+    public MagicType GetMagicType()
+    {
+        return m_MagicType;
+    }
+
     public void Act() { m_Acted = true; }
 
     public void ActedReset() { m_Acted = false; }
@@ -127,6 +132,8 @@ public class CharacterBase : MonoBehaviour
     {
         m_Hp -= damage;
 
+        TextManager.Instance.AddMessageText( "\n" + this.GetName() + "に" + damage + "ダメージ！");
+
         if (m_Hp <= 0)
         {
             m_Hp = 0;
@@ -136,6 +143,8 @@ public class CharacterBase : MonoBehaviour
             animator.Play(DieAnimationName, -1, 0f);
 
             yield return StartCoroutine(WaitForAnimation(DieAnimationName));
+
+            TextManager.Instance.AddMessageText("\n" + this.GetName() + "は倒れた！");
 
             Destroy(gameObject);
         }
@@ -196,20 +205,114 @@ public class CharacterBase : MonoBehaviour
         m_Mp -= 5;
         animator.Play(MagicAnimationName, -1, 0f);
 
-        if (effectSpawner == null)
+        if (m_MagicType != MagicType.HEAL)
         {
-            effectSpawner = GameObject.FindAnyObjectByType<EffectSpawner>();
-        }
-        
-        TextManager.Instance.SetStatus();
-        yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
+            if (effectSpawner == null)
+            {
+                effectSpawner = GameObject.FindAnyObjectByType<EffectSpawner>();
+            }
 
-        effectSpawner.PlayMagicEffect(EffectType.RED_MAGIC, opponent.transform.position);
-        yield return opponent.StartCoroutine(opponent.Damage(m_Magic));
+            TextManager.Instance.SetStatus();
+            yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
+
+            effectSpawner.PlayMagicEffect(EffectType.RED_MAGIC, opponent.transform.position);
+
+            int damage = CalcDamage(opponent, true, m_Magic);
+            yield return opponent.StartCoroutine(opponent.Damage(damage));
+        }
+        else
+        {
+            if (m_IsPlayer)
+            {
+                this.HPHeal(m_Magic);
+            }
+            else
+            {
+                int maxHPDiff = 0;
+                CharacterBase target = null;
+                var characterList = CharacterManager.Instance.GetCharacterList();
+
+                for (int i = 0; i < characterList.Count; i++)
+                {
+                    if (characterList[i].IsPlayer()) continue;
+                    int hpDiff = characterList[i].GetMaxHP() - characterList[i].GetHP();
+                    if (hpDiff > maxHPDiff)
+                    {
+                        target = characterList[i];
+                    }
+                }
+
+                target.HPHeal(m_Magic);
+            }        
+        }
 
         animator.Play(IdleAnimationName, -1, 0f);
 
         IsMagic = false;
+    }
+
+    private int CalcDamage(CharacterBase opponent, bool isMagic, int power)
+    {
+        int result = 1;
+
+        float magni = 0f; 
+
+        if (isMagic)
+        {
+            switch (m_MagicType)
+            {
+                case MagicType.FIRE:
+                    switch (opponent.GetMagicType())
+                    {
+                        case MagicType.WATER:
+                            magni = 0.5f;
+                            break;
+                        case MagicType.THUNDER:
+                            magni = 2f;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case MagicType.WATER:
+                    switch (opponent.GetMagicType())
+                    {
+                        case MagicType.FIRE:
+                            magni = 2f;
+                            break;
+                        case MagicType.THUNDER:
+                            magni = 0.5f;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case MagicType.THUNDER:
+                    switch (opponent.GetMagicType())
+                    {
+                        case MagicType.FIRE:
+                            magni = 0.5f;
+                            break;
+                        case MagicType.WATER:
+                            magni = 2f;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (m_MagicType == opponent.GetMagicType())
+        {
+            magni = 1f;
+        }
+
+        result = (int)(power * magni);
+
+        return result;
     }
 
     public void HPHeal(int heal)
@@ -325,15 +428,14 @@ public class CharacterBase : MonoBehaviour
             case ActionType.ATTACK:
                 if (!m_IsPlayer)
                 {
+                    TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！");
                     StartCoroutine(Attack(targetCharacter));
-                    TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！"
-                        + "\n" + targetCharacter.GetName() + "に" + this.GetPower() + "ダメージ！");
+                    
                 }
                 else if (this.gameObject.CompareTag("Player"))
                 {
+                    TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！");
                     StartCoroutine(Attack(targetCharacter));
-                    TextManager.Instance.SetMessageText(this.GetName() + "の攻撃！"
-                        + "\n" + targetCharacter.GetName() + "に" + this.GetPower() + "ダメージ！");
                 }
 
                 if (targetCharacter.GetHP() <= 0)
@@ -346,15 +448,13 @@ public class CharacterBase : MonoBehaviour
             case ActionType.MAGIC:
                 if (!m_IsPlayer)
                 {
+                    TextManager.Instance.SetMessageText(this.GetName() + "の魔法！");
                     StartCoroutine(Magic(targetCharacter));
-                    TextManager.Instance.SetMessageText(this.GetName() + "の魔法！"
-                        + "\n" + targetCharacter.GetName() + "に" + this.GetMagic() + "ダメージ！");
                 }
                 else if (this.gameObject.CompareTag("Player"))
                 {
+                    TextManager.Instance.SetMessageText(this.GetName() + "の魔法！");
                     StartCoroutine(Magic(targetCharacter));
-                    TextManager.Instance.SetMessageText(this.GetName() + "の魔法！"
-                        + "\n" + targetCharacter.GetName() + "に" + this.GetMagic() + "ダメージ！");
                 }
 
                 if (targetCharacter.GetHP() <= 0)
@@ -392,5 +492,5 @@ public class CharacterBase : MonoBehaviour
         m_IsSelectingItem = false;
         UseItem(type);
         TextManager.Instance.DeleteText(TextType.ITEM_TEXT);
-    }    
+    }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Mashroom : CharacterBase
 {
-    private static int m_RedMaxHp = 5;
+    private static int m_RedMaxHp = 50;
     private static int m_RedMaxMp = 30;
     private static int m_RedAttackPercant = 0;
 
@@ -24,9 +24,9 @@ public class Mashroom : CharacterBase
         m_Hp = m_MaxHp;
         m_Mp = m_MaxMp;
         m_Power = 2;
-        m_Magic = 13;
+        m_Magic = 10;
         m_Speed = 7;
-        m_MagicType = MagicType.FIRE;
+        m_MagicType = MagicType.HEAL;
         m_Name = "ÉLÉmÉR";
         m_Acted = false;
     }
