@@ -66,14 +66,25 @@ public class BattleManager : MonoBehaviour
 
         yield return null;
 
-        CharacterBase enemy = m_CharacterManager.GetCharacterList()[1];
-
-        string enemyName = enemy.GetName();
-
         m_TextManager.CreateText(TextType.MESSAGE_TEXT);
 
-        m_TextManager.SetMessageText(enemyName + "‚ªŒ»‚ê‚½I");
+        var characterList = m_CharacterManager.GetCharacterList();
+        bool textCreated = false;
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            if (characterList[i].IsPlayer()) continue;
 
+            if (!textCreated)
+            {
+                m_TextManager.SetMessageText(characterList[i].GetName() + "‚ªŒ»‚ê‚½I");
+                textCreated = true;
+            }
+            else
+            {
+                m_TextManager.AddMessageText("\n" + characterList[i].GetName() + "‚ªŒ»‚ê‚½I");
+            }
+        }
+        
         yield return WaitForKeyInput();
 
         m_TextManager.CreateStatusText(m_CharacterManager.GetCharacterList().Count);

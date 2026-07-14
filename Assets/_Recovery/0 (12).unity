@@ -765,8 +765,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicSpawner
   redMagic: {fileID: 6078855690930083157, guid: d5d4e140e207eb84a9fd61cfa228740e, type: 3}
-  yellowMagic: {fileID: 4312753469743878034, guid: 2966a332421c99f40944c3f4ac2ec731, type: 3}
-  blueMagic: {fileID: 1721168698759140675, guid: a2aacf21204f7964e90266bc46129778, type: 3}
   hpHeal: {fileID: 4019425174110398028, guid: bd681d192fe974b4380e30a77b5d6224, type: 3}
   mpHeal: {fileID: 1147450771747053770, guid: 356dc752491279d4ea7d44b82a9c8d94, type: 3}
   escape: {fileID: 2100975530106319195, guid: a867a44db713ef1419ee7ea7c5020118, type: 3}
