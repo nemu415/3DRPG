@@ -142,6 +142,8 @@ public class BattleManager : MonoBehaviour
                 "1:攻撃 2:魔法 3:アイテム 4:逃げる"
                  );
 
+            m_TextManager.CreateText(TextType.CURSOR);
+
             ActionType playerAction = ActionType.ATTACK;
 
             bool inputSelected = false;
@@ -182,6 +184,10 @@ public class BattleManager : MonoBehaviour
 
                 for (int i = 1; i < characterList.Count; i++)
                 {
+                    string characterName = characterList[i].GetName();
+                    int nameLength = characterName.Length;
+
+                    // 名前の文字数分だけスペースをあけて均等に
                     m_TextManager.AddMessageText("\n" + i + "." + characterList[i].GetName());
                 }
 
@@ -285,6 +291,7 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitWhile(() => currentCharacter.IsMagic);
                 }
 
+                
                 m_TextManager.SetStatus();
 
                 yield return WaitForKeyInput();

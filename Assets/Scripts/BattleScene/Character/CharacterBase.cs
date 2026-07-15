@@ -4,8 +4,9 @@ using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static ItemManager;
 using static EffectSpawner;
+using static ItemManager;
+using static UnityEngine.GraphicsBuffer;
 
 public class CharacterBase : MonoBehaviour
 {
@@ -245,20 +246,21 @@ public class CharacterBase : MonoBehaviour
 
                 for (int i = 0; i < characterList.Count; i++)
                 {
+                    if (characterList[i].IsDestroyed()) continue;
                     if (characterList[i].IsPlayer()) continue;
                     int hpDiff = characterList[i].GetMaxHP() - characterList[i].GetHP();
                     if (hpDiff > maxHPDiff)
                     {
                         target = characterList[i];
-                        Debug.Log(target.GetName());
                         maxHPDiff = hpDiff;
                     }
                 }
 
+                Debug.Log(target.GetName());
+
                 yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
 
-
-                TextManager.Instance.AddMessageText("\n" + target.GetName() + "‚ÌHP‚ª" + m_Magic + "‰ñ•œ‚µ‚½I");
+                
 
                 target.HPHeal(m_Magic);
             }
@@ -342,12 +344,16 @@ public class CharacterBase : MonoBehaviour
 
         effectSpawner.PlayMagicEffect(EffectType.HP_HEAL, this.transform.position);
 
-        m_Hp += heal;  
+        int hpDiff = m_MaxHp - m_Hp;
 
-        if (m_Hp > m_MaxHp)
+        if (hpDiff < heal)
         {
-            m_Hp = m_MaxHp;
+            heal = hpDiff;
         }
+
+        m_Hp += heal;
+
+        TextManager.Instance.AddMessageText("\n" + this.m_Name + "‚ÌHP‚ª" + heal + "‰ñ•œ‚µ‚½I");
     }
 
     public void MPHeal(int heal)

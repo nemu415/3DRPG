@@ -10,8 +10,7 @@ public enum TextType
     MESSAGE_TEXT,
     STATUS_TEXT,
     ITEM_TEXT,
-    HP_GAUGE,
-    MP_GAUGE,
+    CURSOR,
     TEXT_TYPE_MAX,
     TEXT_TYPE_NONE = -1
 };
@@ -19,6 +18,8 @@ public enum TextType
 public class TextManager : MonoBehaviour
 {
     public static TextManager Instance { get; private set; }
+
+    private Vector2 cursorPos = new Vector2(-330f, -255f);
 
     private Vector2 m_PlayerStatusPos;
     private Vector2 m_EnemyStatusPos;
@@ -37,6 +38,12 @@ public class TextManager : MonoBehaviour
 
     [SerializeField]
     private GameObject itemText;
+
+    [SerializeField]
+    private GameObject cursor;
+
+    [SerializeField]
+    private CursorText m_Cursor;
 
     [SerializeField]
     private Transform canvasTarget;
@@ -203,6 +210,10 @@ public class TextManager : MonoBehaviour
             case TextType.ITEM_TEXT:
                 itemText.SetActive(true);
                 break;
+            case TextType.CURSOR:
+                cursor.SetActive(true);
+                m_Cursor.SetPos(cursorPos);
+                break;
 
             default:
                 break;
@@ -295,9 +306,10 @@ public class TextManager : MonoBehaviour
 
             if (i >= characterList.Count || characterList[i] == null)
             {
+                HideStatusUI(m_StatusTextList[i].gameObject);
                 continue;
             }
-           
+
             CharacterBase character = characterList[i];
             int hp = character.GetHP();
             int mp = character.GetMP();
@@ -315,8 +327,7 @@ public class TextManager : MonoBehaviour
                 ShowStatusUI(m_StatusTextList[i].gameObject);
             }
         }
-    }
- 
+    } 
 
     private void HideStatusUI(GameObject targetObj)
     {
