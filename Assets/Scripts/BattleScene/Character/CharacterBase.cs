@@ -4,8 +4,9 @@ using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static ItemManager;
 using static EffectSpawner;
+using static ItemManager;
+using static UnityEngine.GraphicsBuffer;
 
 public class CharacterBase : MonoBehaviour
 {
@@ -215,7 +216,18 @@ public class CharacterBase : MonoBehaviour
             TextManager.Instance.SetStatus();
             yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
 
-            effectSpawner.PlayMagicEffect(EffectType.RED_MAGIC, opponent.transform.position);
+            switch (m_MagicType)
+            {
+                case MagicType.FIRE:
+                    effectSpawner.PlayMagicEffect(EffectType.RED_MAGIC, opponent.transform.position);
+                    break;
+                case MagicType.WATER:
+                    effectSpawner.PlayMagicEffect(EffectType.BLUE_MAGIC, opponent.transform.position);
+                    break;
+                case MagicType.THUNDER:
+                    effectSpawner.PlayMagicEffect(EffectType.YELLOW_MAGIC, opponent.transform.position);
+                    break;
+            }
 
             int damage = CalcDamage(opponent, true, m_Magic);
             yield return opponent.StartCoroutine(opponent.Damage(damage));
@@ -228,22 +240,30 @@ public class CharacterBase : MonoBehaviour
             }
             else
             {
-                int maxHPDiff = 0;
+                int maxHPDiff = -1;
                 CharacterBase target = null;
                 var characterList = CharacterManager.Instance.GetCharacterList();
 
                 for (int i = 0; i < characterList.Count; i++)
                 {
+                    if (characterList[i].IsDestroyed()) continue;
                     if (characterList[i].IsPlayer()) continue;
                     int hpDiff = characterList[i].GetMaxHP() - characterList[i].GetHP();
                     if (hpDiff > maxHPDiff)
                     {
                         target = characterList[i];
+                        maxHPDiff = hpDiff;
                     }
                 }
 
+                Debug.Log(target.GetName());
+
+                yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
+
+                
+
                 target.HPHeal(m_Magic);
-            }        
+            }
         }
 
         animator.Play(IdleAnimationName, -1, 0f);
@@ -324,12 +344,16 @@ public class CharacterBase : MonoBehaviour
 
         effectSpawner.PlayMagicEffect(EffectType.HP_HEAL, this.transform.position);
 
+        int hpDiff = m_MaxHp - m_Hp;
+
+        if (hpDiff < heal)
+        {
+            heal = hpDiff;
+        }
+
         m_Hp += heal;
 
-        if (m_Hp > m_MaxHp)
-        {
-            m_Hp = m_MaxHp;
-        }
+        TextManager.Instance.AddMessageText("\n" + this.m_Name + "のHPが" + heal + "回復した！");
     }
 
     public void MPHeal(int heal)
@@ -399,14 +423,14 @@ public class CharacterBase : MonoBehaviour
         {
             case ItemType.HP_HEAL:
                 HPHeal(10);
-                TextManager.Instance.SetMessageText("HP回復");
+                TextManager.Instance.SetMessageText("回復薬で" + m_Name + "のHPが10回復");
                 break;
             case ItemType.MP_HEAL:
-                TextManager.Instance.SetMessageText("MP回復");
+                TextManager.Instance.SetMessageText("魔力チャージで" + m_Name + "のMPが10回復");
                 MPHeal(10);
                 break;
             case ItemType.ESCAPE:
-                TextManager.Instance.SetMessageText("逃走");
+                TextManager.Instance.SetMessageText(m_Name + "は、煙玉を使った");
                 Escape();
                 break;
             default:
@@ -492,5 +516,15 @@ public class CharacterBase : MonoBehaviour
         m_IsSelectingItem = false;
         UseItem(type);
         TextManager.Instance.DeleteText(TextType.ITEM_TEXT);
+    }
+
+    IEnumerator WaitForKeyInput()
+    {
+        yield return null;
+
+        while (!Input.GetKeyDown(KeyCode.Space))
+        {
+            yield return null;
+        }
     }
 }

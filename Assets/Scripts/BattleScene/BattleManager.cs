@@ -66,14 +66,25 @@ public class BattleManager : MonoBehaviour
 
         yield return null;
 
-        CharacterBase enemy = m_CharacterManager.GetCharacterList()[1];
-
-        string enemyName = enemy.GetName();
-
         m_TextManager.CreateText(TextType.MESSAGE_TEXT);
 
-        m_TextManager.SetMessageText(enemyName + "が現れた！");
+        var characterList = m_CharacterManager.GetCharacterList();
+        bool textCreated = false;
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            if (characterList[i].IsPlayer()) continue;
 
+            if (!textCreated)
+            {
+                m_TextManager.SetMessageText(characterList[i].GetName() + "が現れた！");
+                textCreated = true;
+            }
+            else
+            {
+                m_TextManager.AddMessageText("\n" + characterList[i].GetName() + "が現れた！");
+            }
+        }
+        
         yield return WaitForKeyInput();
 
         m_TextManager.CreateStatusText(m_CharacterManager.GetCharacterList().Count);
@@ -131,6 +142,8 @@ public class BattleManager : MonoBehaviour
                 "1:攻撃 2:魔法 3:アイテム 4:逃げる"
                  );
 
+            m_TextManager.CreateText(TextType.CURSOR);
+
             ActionType playerAction = ActionType.ATTACK;
 
             bool inputSelected = false;
@@ -171,6 +184,10 @@ public class BattleManager : MonoBehaviour
 
                 for (int i = 1; i < characterList.Count; i++)
                 {
+                    string characterName = characterList[i].GetName();
+                    int nameLength = characterName.Length;
+
+                    // 名前の文字数分だけスペースをあけて均等に
                     m_TextManager.AddMessageText("\n" + i + "." + characterList[i].GetName());
                 }
 
@@ -274,6 +291,7 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitWhile(() => currentCharacter.IsMagic);
                 }
 
+                
                 m_TextManager.SetStatus();
 
                 yield return WaitForKeyInput();

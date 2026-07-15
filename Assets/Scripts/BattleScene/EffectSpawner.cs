@@ -8,6 +8,12 @@ public class EffectSpawner : MonoBehaviour
     private GameObject redMagic;
 
     [SerializeField]
+    private GameObject yellowMagic;
+
+    [SerializeField]
+    private GameObject blueMagic;
+
+    [SerializeField]
     private GameObject hpHeal;
 
     [SerializeField]
@@ -23,6 +29,8 @@ public class EffectSpawner : MonoBehaviour
     public enum EffectType
     {
         RED_MAGIC,
+        YELLOW_MAGIC,
+        BLUE_MAGIC,
         HP_HEAL,
         MP_HEAL,
         ESCAPE,
@@ -41,6 +49,20 @@ public class EffectSpawner : MonoBehaviour
             case EffectType.RED_MAGIC:
                 spawnedEffect = Instantiate(redMagic, spawnPosition, spawnRotation);
                 if (redMagic == null)
+                {
+                    Debug.Log("MagicNull");
+                }
+                break;
+            case EffectType.YELLOW_MAGIC:
+                spawnedEffect = Instantiate(yellowMagic, spawnPosition, yellowMagic.transform.rotation);
+                if (yellowMagic == null)
+                {
+                    Debug.Log("MagicNull");
+                }
+                break;
+            case EffectType.BLUE_MAGIC:
+                spawnedEffect = Instantiate(blueMagic, spawnPosition, blueMagic.transform.rotation);
+                if (blueMagic == null)
                 {
                     Debug.Log("MagicNull");
                 }
