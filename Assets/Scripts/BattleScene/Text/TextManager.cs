@@ -19,7 +19,7 @@ public class TextManager : MonoBehaviour
 {
     public static TextManager Instance { get; private set; }
 
-    private Vector2 cursorPos = new Vector2(-330f, -255f);
+    private Vector2 cursorPos = new Vector2(-335f, -235f);
 
     private Vector2 m_PlayerStatusPos;
     private Vector2 m_EnemyStatusPos;
@@ -66,6 +66,17 @@ public class TextManager : MonoBehaviour
     {
         if (Instance == null) { Instance = this; }
         else { Destroy(gameObject); }
+
+        if (cursor == null)
+        {
+            Transform child = transform.Find("Cursor");
+            if (child != null) cursor = child.gameObject;
+        }
+
+        if (cursor == null)
+        {
+            Debug.LogError("cursor が TextManager に割り当てられていません！", this);
+        }
     }
 
     private void Start()
@@ -212,7 +223,20 @@ public class TextManager : MonoBehaviour
                 break;
             case TextType.CURSOR:
                 cursor.SetActive(true);
-                m_Cursor.SetPos(cursorPos);
+                RectTransform cursorRect = cursor.GetComponent<RectTransform>();
+
+                if (m_ActiveMessage != null)
+                {
+                    cursor.transform.SetParent(m_ActiveMessage.transform, false);
+
+                    cursor.transform.SetSiblingIndex(1);
+
+                    cursorRect.anchoredPosition = cursorPos;
+
+                    cursorRect.localPosition = new Vector3(cursorRect.localPosition.x, cursorRect.localPosition.y, 0f);
+
+                    cursor.SetActive(true);
+                }
                 break;
 
             default:
@@ -362,4 +386,25 @@ public class TextManager : MonoBehaviour
         m_ItemText.SetText();
     }
 
+    public void SetCursorPos(Vector2 pos)
+    {
+        if (cursor == null) return;
+
+        RectTransform cursorRect = cursor.GetComponent<RectTransform>();
+
+        cursorRect.anchoredPosition = pos;
+    }
+
+    public void CursorMove(Vector2 moveVec)
+    {
+        if (cursor == null) return;
+
+        RectTransform cursorRect = cursor.GetComponent<RectTransform>();
+
+        Vector3 prevPos = cursorRect.anchoredPosition;
+        prevPos.x += moveVec.x;
+        prevPos.y += moveVec.y;
+
+        cursorRect.anchoredPosition = prevPos;
+    }
 }

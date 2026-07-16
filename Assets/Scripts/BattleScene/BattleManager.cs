@@ -138,8 +138,8 @@ public class BattleManager : MonoBehaviour
         while (characterList.Count > 1)
         {
             m_TextManager.SetMessageText(
-                playerName + "は どうする？\n" +
-                "1:攻撃 2:魔法 3:アイテム 4:逃げる"
+                playerName + "は どうする？\n\n" +
+                " 攻　撃　　魔　法　アイテム　 逃げる"
                  );
 
             m_TextManager.CreateText(TextType.CURSOR);
@@ -148,80 +148,134 @@ public class BattleManager : MonoBehaviour
 
             bool inputSelected = false;
 
+            Vector2 cursorMove = Vector2.zero;
+            int cursorIndexMax = 0;
+            int cursorIndexNow = 0;
+
             while (!inputSelected)
             {
                 yield return null;
 
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                cursorIndexMax = 3;
+
+                if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
-                    playerAction = ActionType.ATTACK;
-                    inputSelected = true;
+                    if (cursorIndexNow < cursorIndexMax)
+                    {
+                        cursorMove = new Vector2(100.0f, 0.0f);
+                        m_TextManager.CursorMove(cursorMove);
+                        cursorIndexNow++;
+                    }
                 }
-                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                else if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
-                    playerAction = ActionType.MAGIC;
-                    inputSelected = true;
+                    if (cursorIndexNow > 0)
+                    {
+                        cursorMove = new Vector2(-100.0f, 0.0f);
+                        m_TextManager.CursorMove(cursorMove);
+                        cursorIndexNow--;
+                    }
                 }
-                else if (Input.GetKeyDown(KeyCode.Alpha3))
+
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    playerAction = ActionType.ITEM;
                     inputSelected = true;
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha4))
-                {
-                    playerAction = ActionType.ESCAPE;
-                    inputSelected = true;
+
+                    switch (cursorIndexNow)
+                    { 
+                        case 0:
+                            playerAction = ActionType.ATTACK;
+                            break;
+                        case 1:
+                            playerAction = ActionType.MAGIC;
+                            break;
+                        case 2:
+                            playerAction = ActionType.ITEM;
+                            break;
+                        case 3:
+                            playerAction = ActionType.ESCAPE;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
-            CharacterBase playerTargetCharacter = m_CharacterManager.GetCharacterList()[0];
-
-
+            CharacterBase playerTargetCharacter = characterList[0];
 
             if (playerAction == ActionType.ATTACK || playerAction == ActionType.MAGIC)
             {
-                m_TextManager.SetMessageText("誰に攻撃する？");
+                m_TextManager.SetMessageText("誰に攻撃する？\n\n");
 
                 for (int i = 1; i < characterList.Count; i++)
                 {
                     string characterName = characterList[i].GetName();
                     int nameLength = characterName.Length;
 
-                    // 名前の文字数分だけスペースをあけて均等に
-                    m_TextManager.AddMessageText("\n" + i + "." + characterList[i].GetName());
+                    m_TextManager.AddMessageText(characterList[i].GetName() + " ");
                 }
 
-                if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3))
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    yield return null;
+                    //yield return null;
                 }
 
                 bool targetSelected = false;
 
                 while (!targetSelected)
                 {
-                    if (Input.GetKeyDown(KeyCode.Alpha1))
+                    //yield return null;
+
+                    cursorIndexMax = characterList.Count;
+
+                    if (Input.GetKeyDown(KeyCode.RightArrow))
                     {
-                        playerTargetCharacter = m_CharacterManager.GetCharacterList()[1];
-                        if (playerTargetCharacter != null)
+                        if (cursorIndexNow < cursorIndexMax)
                         {
-                            targetSelected = true;
+                            cursorMove = new Vector2(100.0f, 0.0f);
+                            m_TextManager.CursorMove(cursorMove);
+                            cursorIndexNow++;
                         }
                     }
-                    else if (Input.GetKeyDown(KeyCode.Alpha2))
+                    else if (Input.GetKeyDown(KeyCode.LeftArrow))
                     {
-                        playerTargetCharacter = m_CharacterManager.GetCharacterList()[2];
-                        if (playerTargetCharacter != null)
+                        if (cursorIndexNow > 0)
                         {
-                            targetSelected = true;
+                            cursorMove = new Vector2(-100.0f, 0.0f);
+                            m_TextManager.CursorMove(cursorMove);
+                            cursorIndexNow--;
                         }
                     }
-                    else if (Input.GetKeyDown(KeyCode.Alpha3))
+
+                    if (Input.GetKeyDown(KeyCode.Space))
                     {
-                        playerTargetCharacter = m_CharacterManager.GetCharacterList()[3];
-                        if (playerTargetCharacter != null)
+                        inputSelected = true;
+
+                        switch (cursorIndexNow)
                         {
-                            targetSelected = true;
+                            case 0:
+                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[1];
+                                if (playerTargetCharacter != null)
+                                {
+                                    targetSelected = true;
+                                }
+                                break;
+                            case 1:
+                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[2];
+                                if (playerTargetCharacter != null)
+                                {
+                                    targetSelected = true;
+                                }
+                                break;
+                            case 2:
+                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[3];
+                                if (playerTargetCharacter != null)
+                                {
+                                    targetSelected = true;
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
 
