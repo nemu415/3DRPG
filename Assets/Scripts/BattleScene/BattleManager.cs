@@ -111,6 +111,16 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    IEnumerator WaitForKeyRelease()
+    {
+        yield return null;
+
+        while (!Input.GetKeyUp(KeyCode.Space))
+        {
+            yield return null;
+        }
+    }
+
     IEnumerator BattleFlow()
     {
         yield return null;
@@ -139,7 +149,7 @@ public class BattleManager : MonoBehaviour
         {
             m_TextManager.SetMessageText(
                 playerName + "は どうする？\n\n" +
-                " 攻　撃　　魔　法　アイテム　 逃げる"
+                " 攻　撃　　魔　法　 アイテム　逃 げ る"
                  );
 
             m_TextManager.CreateText(TextType.CURSOR);
@@ -182,7 +192,7 @@ public class BattleManager : MonoBehaviour
                     inputSelected = true;
 
                     switch (cursorIndexNow)
-                    { 
+                    {
                         case 0:
                             playerAction = ActionType.ATTACK;
                             break;
@@ -200,6 +210,8 @@ public class BattleManager : MonoBehaviour
                     }
                 }
             }
+
+            yield return WaitForKeyRelease();
 
             CharacterBase playerTargetCharacter = characterList[0];
 
@@ -226,7 +238,7 @@ public class BattleManager : MonoBehaviour
                 {
                     //yield return null;
 
-                    cursorIndexMax = characterList.Count;
+                    cursorIndexMax = characterList.Count - 2;
 
                     if (Input.GetKeyDown(KeyCode.RightArrow))
                     {
@@ -236,6 +248,7 @@ public class BattleManager : MonoBehaviour
                             m_TextManager.CursorMove(cursorMove);
                             cursorIndexNow++;
                         }
+
                     }
                     else if (Input.GetKeyDown(KeyCode.LeftArrow))
                     {
@@ -249,7 +262,7 @@ public class BattleManager : MonoBehaviour
 
                     if (Input.GetKeyDown(KeyCode.Space))
                     {
-                        inputSelected = true;
+                        targetSelected = true;
 
                         switch (cursorIndexNow)
                         {
@@ -277,6 +290,8 @@ public class BattleManager : MonoBehaviour
                             default:
                                 break;
                         }
+
+                        m_TextManager.DeleteText(TextType.CURSOR);
                     }
 
                     yield return null;
@@ -286,113 +301,192 @@ public class BattleManager : MonoBehaviour
             if (playerAction == ActionType.ITEM)
             {
                 m_TextManager.SetMessageText("どのアイテムを使う？");
+                yield return WaitForKeyRelease();
 
-            }
+                m_TextManager.SetMessageText("誰に攻撃する？\n\n");
 
-            List<CharacterBase> sortedCharacterList = characterList
-                .OrderByDescending(c =>
+                for (int i = 1; i < characterList.Count; i++)
                 {
-                    if (c.IsPlayer() && (playerAction == ActionType.ITEM || playerAction == ActionType.ESCAPE))
-                    {
-                        return 1;
-                    }
-                    return 0;
-                })
-                .ThenByDescending(c => c.GetSpeed())
-                .ToList();
+                    string characterName = characterList[i].GetName();
+                    int nameLength = characterName.Length;
 
-            for (int i = 0; i < sortedCharacterList.Count; i++)
-            {
-                if (sortedCharacterList[i] == null) continue;
-
-                CharacterBase currentCharacter = sortedCharacterList[i];
-
-                CharacterBase targetCharacter = m_CharacterManager.GetCharacterList()[0];
-
-                ActionType finalAction;
-
-                if (currentCharacter.IsPlayer())
-                {
-                    finalAction = playerAction;
-
-                    targetCharacter = playerTargetCharacter;
+                    m_TextManager.AddMessageText(characterList[i].GetName() + " ");
                 }
-                else
-                {
-                    targetCharacter = m_CharacterManager.GetCharacterList()[0];
 
-                    int attackPercent = currentCharacter.GetAttackPercent();
-                    int border = Random.Range(0, 100);
-                    if (attackPercent < border && currentCharacter.GetMP() > 0)
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    //yield return null;
+                }
+
+                bool targetSelected = false;
+
+                while (!targetSelected)
+                {
+                    //yield return null;
+
+                    cursorIndexMax = characterList.Count - 2;
+
+                    if (Input.GetKeyDown(KeyCode.RightArrow))
                     {
-                        finalAction = ActionType.MAGIC;
+                        if (cursorIndexNow < cursorIndexMax)
+                        {
+                            cursorMove = new Vector2(100.0f, 0.0f);
+                            m_TextManager.CursorMove(cursorMove);
+                            cursorIndexNow++;
+                        }
+
+                    }
+                    else if (Input.GetKeyDown(KeyCode.LeftArrow))
+                    {
+                        if (cursorIndexNow > 0)
+                        {
+                            cursorMove = new Vector2(-100.0f, 0.0f);
+                            m_TextManager.CursorMove(cursorMove);
+                            cursorIndexNow--;
+                        }
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        targetSelected = true;
+
+                        switch (cursorIndexNow)
+                        {
+                            case 0:
+                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[1];
+                                if (playerTargetCharacter != null)
+                                {
+                                    targetSelected = true;
+                                }
+                                break;
+                            case 1:
+                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[2];
+                                if (playerTargetCharacter != null)
+                                {
+                                    targetSelected = true;
+                                }
+                                break;
+                            case 2:
+                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[3];
+                                if (playerTargetCharacter != null)
+                                {
+                                    targetSelected = true;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+
+                        m_TextManager.DeleteText(TextType.CURSOR);
+                    }
+
+                    yield return null;
+                }
+
+                List<CharacterBase> sortedCharacterList = characterList
+                    .OrderByDescending(c =>
+                    {
+                        if (c.IsPlayer() && (playerAction == ActionType.ITEM || playerAction == ActionType.ESCAPE))
+                        {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    .ThenByDescending(c => c.GetSpeed())
+                    .ToList();
+
+                for (int i = 0; i < sortedCharacterList.Count; i++)
+                {
+                    if (sortedCharacterList[i] == null) continue;
+
+                    CharacterBase currentCharacter = sortedCharacterList[i];
+
+                    CharacterBase targetCharacter = m_CharacterManager.GetCharacterList()[0];
+
+                    ActionType finalAction;
+
+                    if (currentCharacter.IsPlayer())
+                    {
+                        finalAction = playerAction;
+
+                        targetCharacter = playerTargetCharacter;
                     }
                     else
                     {
-                        finalAction = ActionType.ATTACK;
+                        targetCharacter = m_CharacterManager.GetCharacterList()[0];
+
+                        int attackPercent = currentCharacter.GetAttackPercent();
+                        int border = Random.Range(0, 100);
+                        if (attackPercent < border && currentCharacter.GetMP() > 0)
+                        {
+                            finalAction = ActionType.MAGIC;
+                        }
+                        else
+                        {
+                            finalAction = ActionType.ATTACK;
+                        }
                     }
-                }
 
-                currentCharacter.Action(finalAction, targetCharacter);
+                    currentCharacter.Action(finalAction, targetCharacter);
 
-                if (finalAction == ActionType.ATTACK)
-                {
-                    yield return new WaitWhile(() => currentCharacter.IsAttacking);
-                }
-
-                else if (finalAction == ActionType.MAGIC)
-                {
-                    yield return new WaitWhile(() => currentCharacter.IsMagic);
-                }
-
-                
-                m_TextManager.SetStatus();
-
-                yield return WaitForKeyInput();
-
-                bool playerAlive = false;
-                bool anyEnemyAlive = false; ;
-
-                for (int j = 0; j < sortedCharacterList.Count; j++)
-                {
-                    if (sortedCharacterList[j].GetHP() <= 0) continue;
-
-                    if (sortedCharacterList[j].IsPlayer())
+                    if (finalAction == ActionType.ATTACK)
                     {
-                        playerAlive = true;
+                        yield return new WaitWhile(() => currentCharacter.IsAttacking);
                     }
-                    else
+
+                    else if (finalAction == ActionType.MAGIC)
                     {
-                        anyEnemyAlive = true;
-                        
+                        yield return new WaitWhile(() => currentCharacter.IsMagic);
+                    }
+
+
+                    m_TextManager.SetStatus();
+
+                    yield return WaitForKeyInput();
+
+                    bool playerAlive = false;
+                    bool anyEnemyAlive = false; ;
+
+                    for (int j = 0; j < sortedCharacterList.Count; j++)
+                    {
+                        if (sortedCharacterList[j].GetHP() <= 0) continue;
+
+                        if (sortedCharacterList[j].IsPlayer())
+                        {
+                            playerAlive = true;
+                        }
+                        else
+                        {
+                            anyEnemyAlive = true;
+
+                        }
+                    }
+
+                    if (!playerAlive)
+                    {
+                        StartCoroutine(Lose());
+
+                        yield break;
+                    }
+
+                    if (!anyEnemyAlive)
+                    {
+                        StartCoroutine(Win());
+
+                        yield break;
                     }
                 }
 
-                if (!playerAlive)
+                for (int i = 0; i < sortedCharacterList.Count; i++)
                 {
-                    StartCoroutine(Lose());
-
-                    yield break;
-                }
-
-                if (!anyEnemyAlive)
-                {
-                    StartCoroutine(Win());
-
-                    yield break;
+                    if (!sortedCharacterList[i].IsPoisoned())
+                    {
+                        sortedCharacterList[i].Damage(5);
+                    }
                 }
             }
 
-            for (int i = 0; i < sortedCharacterList.Count; i++)
-            {
-                if (!sortedCharacterList[i].IsPoisoned())
-                {
-                    sortedCharacterList[i].Damage(5);
-                }
-            }
-        }
-
-        
+        } 
 
         yield break;
     }
