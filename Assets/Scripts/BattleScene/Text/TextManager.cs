@@ -19,7 +19,7 @@ public class TextManager : MonoBehaviour
 {
     public static TextManager Instance { get; private set; }
 
-    private Vector2 cursorPos = new Vector2(-335f, -235f);
+    private Vector2 cursorPos = new Vector2(-330f, -250f);
 
     private Vector2 m_PlayerStatusPos;
     private Vector2 m_EnemyStatusPos;
@@ -256,6 +256,9 @@ public class TextManager : MonoBehaviour
 
             case TextType.ITEM_TEXT:
                 itemText.SetActive(false);
+                break;
+            case TextType.CURSOR:
+                cursor.SetActive(false);
                 break;
 
             default:

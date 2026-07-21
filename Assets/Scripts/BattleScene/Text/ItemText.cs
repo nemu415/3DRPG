@@ -27,11 +27,6 @@ public class ItemText : MonoBehaviour
 
     public void SetText()
     {
-        if (m_ItemText == null)
-        {
-            Debug.LogError($"【原因確定】{gameObject.name} についている m_ItemText がインスペクターで設定されていません！");
-        }
-
         m_ItemText.text = string.Format(
             "1.回復薬　　　　{0}\n" +
             "2.魔力チャージ　{1}\n" +

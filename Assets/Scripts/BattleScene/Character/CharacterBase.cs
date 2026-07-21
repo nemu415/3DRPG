@@ -256,8 +256,6 @@ public class CharacterBase : MonoBehaviour
                     }
                 }
 
-                Debug.Log(target.GetName());
-
                 yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
 
                 
