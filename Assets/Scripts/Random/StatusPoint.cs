@@ -1,16 +1,7 @@
-using UnityEngine;
-
-public class StatusPoint : MonoBehaviour
+public static class StatusPoint
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static int GetPoint()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return RandomManager.GetInt(3, 7);   // 3`6‚Ì’†‚©‚çƒ‰ƒ“ƒ_ƒ€‚È®”‚ğæ“¾
     }
 }

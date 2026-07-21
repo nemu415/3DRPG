@@ -1,8 +1,8 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public class Dice : MonoBehaviour
+public static class Dice
 {
-    // ダイスの種類を定義する列挙型
     public enum DiceType
     {
         D4,     // 4面ダイス
@@ -11,39 +11,30 @@ public class Dice : MonoBehaviour
         D20     // 20面ダイス
     }
 
-    // ダイスを振るメソッド
-    public static int Roll(DiceType diceType)
+    // ダイス1個振る
+    public static int Roll(DiceType type)
     {
-        // ダイスの種類に応じてランダムな値を返す
-        switch (diceType)
+        switch (type)
         {
-            case DiceType.D4:
-                return RandomManager.GetInt(1, 4);
-
-            case DiceType.D6:
-                return RandomManager.GetInt(1, 6);
-
-            case DiceType.D8:
-                return RandomManager.GetInt(1, 8);
-
-            case DiceType.D20:
-                return RandomManager.GetInt(1, 20);
-
-            default:
-                return 0;
+            case DiceType.D4: return RandomManager.GetInt(1, 4);    // 1～4のランダムな整数を取得
+            case DiceType.D6: return RandomManager.GetInt(1, 6);    // 1～6のランダムな整数を取得
+            case DiceType.D8: return RandomManager.GetInt(1, 8);    // 1～8のランダムな整数を取得
+            case DiceType.D20: return RandomManager.GetInt(1, 20);  // 1～20のランダムな整数を取得
         }
+
+        return 0;
     }
 
-    // 複数回
-    public int RollMultiple(int diceCount, int sides)
+    // 全部振る
+    public static int RollAll(List<DiceType> diceList)
     {
         int total = 0;
 
-        for (int i = 0; i < diceCount; i++)
+        foreach (var dice in diceList)  // すべてのダイスを振る
         {
-            total += Roll((DiceType)sides);
+            total += Roll(dice);    // 振った結果を合計する
         }
 
-        return total;
+        return total;   // 合計値を返す
     }
 }
