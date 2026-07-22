@@ -5,6 +5,7 @@ public static class Chest
     // 宝箱から何個ダイスが出る？
     public static int GetDiceCount()
     {
+        // 1～3個の中からランダムな整数を取得
         return RandomManager.GetInt(1, 3);
     }
 

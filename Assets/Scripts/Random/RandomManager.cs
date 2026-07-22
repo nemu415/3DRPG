@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public static class RandomManager
+public  class RandomManager: MonoBehaviour 
 {
     // min`max
     public static int GetInt(int min, int max)
