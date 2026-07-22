@@ -227,17 +227,10 @@ public class BattleManager : MonoBehaviour
                     m_TextManager.AddMessageText(characterList[i].GetName() + " ");
                 }
 
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    //yield return null;
-                }
-
                 bool targetSelected = false;
 
                 while (!targetSelected)
                 {
-                    //yield return null;
-
                     cursorIndexMax = characterList.Count - 2;
 
                     if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -300,31 +293,21 @@ public class BattleManager : MonoBehaviour
 
             if (playerAction == ActionType.ITEM)
             {
+                ItemType itemType = ItemType.NONE;
+
                 m_TextManager.SetMessageText("どのアイテムを使う？");
-                yield return WaitForKeyRelease();
 
-                m_TextManager.SetMessageText("誰に攻撃する？\n\n");
+                int hpHealNum = ItemManager.Instance.GetItemNum(ItemType.HP_HEAL);
+                int mpHealNum = ItemManager.Instance.GetItemNum(ItemType.MP_HEAL);
+                int escapelNum = ItemManager.Instance.GetItemNum(ItemType.ESCAPE);
 
-                for (int i = 1; i < characterList.Count; i++)
+                m_TextManager.AddMessageText("\n\n回復薬(" + hpHealNum + ")　魔力薬(" + mpHealNum + ")　煙　玉(" + escapelNum + ")");
+
+                bool itemUsed = false;
+
+                while (!itemUsed)
                 {
-                    string characterName = characterList[i].GetName();
-                    int nameLength = characterName.Length;
-
-                    m_TextManager.AddMessageText(characterList[i].GetName() + " ");
-                }
-
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    //yield return null;
-                }
-
-                bool targetSelected = false;
-
-                while (!targetSelected)
-                {
-                    //yield return null;
-
-                    cursorIndexMax = characterList.Count - 2;
+                    cursorIndexMax = 2;
 
                     if (Input.GetKeyDown(KeyCode.RightArrow))
                     {
@@ -348,36 +331,27 @@ public class BattleManager : MonoBehaviour
 
                     if (Input.GetKeyDown(KeyCode.Space))
                     {
-                        targetSelected = true;
-
                         switch (cursorIndexNow)
                         {
                             case 0:
-                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[1];
-                                if (playerTargetCharacter != null)
-                                {
-                                    targetSelected = true;
-                                }
+                                itemType = ItemType.HP_HEAL;
+                                itemUsed = true;
                                 break;
                             case 1:
-                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[2];
-                                if (playerTargetCharacter != null)
-                                {
-                                    targetSelected = true;
-                                }
+                                itemType = ItemType.MP_HEAL;
+                                itemUsed = true;
                                 break;
                             case 2:
-                                playerTargetCharacter = m_CharacterManager.GetCharacterList()[3];
-                                if (playerTargetCharacter != null)
-                                {
-                                    targetSelected = true;
-                                }
+                                itemType = ItemType.ESCAPE;
+                                itemUsed = true;
                                 break;
                             default:
                                 break;
                         }
 
                         m_TextManager.DeleteText(TextType.CURSOR);
+
+                        player.UseItem(itemType);
                     }
 
                     yield return null;
@@ -438,7 +412,6 @@ public class BattleManager : MonoBehaviour
                     {
                         yield return new WaitWhile(() => currentCharacter.IsMagic);
                     }
-
 
                     m_TextManager.SetStatus();
 

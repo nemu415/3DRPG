@@ -8,6 +8,7 @@ public enum ItemType
     HP_HEAL,
     MP_HEAL,
     ESCAPE,
+    NONE = -1,
 }
 
 public class ItemManager : MonoBehaviour
@@ -73,6 +74,8 @@ public class ItemManager : MonoBehaviour
 
     public void SpendItem(ItemType type)
     {
+        Debug.Log(type);
+
         switch (type)
         {
             case ItemType.HP_HEAL:

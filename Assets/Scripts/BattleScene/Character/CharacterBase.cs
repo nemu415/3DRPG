@@ -45,6 +45,8 @@ public class CharacterBase : MonoBehaviour
     public bool IsAttacking { get; private set; } = false;
     public bool IsMagic { get; private set; } = false;
 
+    public bool IsUsingItem { get; private set; } = false;
+
     public enum MagicType
     {
         FIRE,
@@ -489,10 +491,7 @@ public class CharacterBase : MonoBehaviour
             case ActionType.ITEM:
                 if (m_IsPlayer)
                 {
-                    TextManager.Instance.CreateText(TextType.ITEM_TEXT);
-                    TextManager.Instance.SetItemText();
-
-                    m_IsSelectingItem = true;
+                    
                 }
                 else
                 {
