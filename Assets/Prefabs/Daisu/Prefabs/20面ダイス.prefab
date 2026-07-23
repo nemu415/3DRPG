@@ -71,5 +71,26 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b8807e175d5ce6048bb38abc40385c1a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4064677948425817424}
   m_SourcePrefab: {fileID: 100100000, guid: b8807e175d5ce6048bb38abc40385c1a, type: 3}
+--- !u!1 &4649065920720479617 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b8807e175d5ce6048bb38abc40385c1a, type: 3}
+  m_PrefabInstance: {fileID: 5495980353953077456}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4064677948425817424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4649065920720479617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992543764caf11544b1b9841dfc5263f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DiceObject
+  diceType: 4
