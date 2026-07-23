@@ -28,6 +28,5 @@ public class Mashroom : CharacterBase
         m_Speed = 7;
         m_MagicType = MagicType.HEAL;
         m_Name = "ÉLÉmÉR";
-        m_Acted = false;
     }
 }

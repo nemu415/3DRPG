@@ -24,7 +24,6 @@ public class CharacterBase : MonoBehaviour
     protected int m_Magic;
     protected int m_Speed;
     protected string m_Name;
-    protected bool m_Acted;
     protected bool m_IsPlayer;
     protected bool m_Alive;
     protected bool m_IsPoisoned;
@@ -99,8 +98,6 @@ public class CharacterBase : MonoBehaviour
 
     public string GetName() { return m_Name; }
 
-    public bool IsActed() { return m_Acted; }
-
     public bool IsPlayer() { return m_IsPlayer; }
 
     public bool IsPoisoned() { return m_IsPoisoned; }
@@ -115,9 +112,10 @@ public class CharacterBase : MonoBehaviour
         return m_MagicType;
     }
 
-    public void Act() { m_Acted = true; }
-
-    public void ActedReset() { m_Acted = false; }
+    public void SetPower(int power) { m_Power = power; }
+    public void SetMagic(int magic) { m_Magic = magic; }
+    public void SetSpeed(int speed) { m_Speed = speed; }
+    public void SetMagicType(MagicType type) { m_MagicType = type; }
 
     private IEnumerator WaitForAnimation(string animationName)
     {
@@ -232,6 +230,7 @@ public class CharacterBase : MonoBehaviour
             }
 
             int damage = CalcDamage(opponent, true, m_Magic);
+            
             yield return opponent.StartCoroutine(opponent.Damage(damage));
         }
         else
@@ -275,7 +274,7 @@ public class CharacterBase : MonoBehaviour
     {
         int result = 1;
 
-        float magni = 0f; 
+        float magni = 1f; 
 
         if (isMagic)
         {
@@ -325,13 +324,8 @@ public class CharacterBase : MonoBehaviour
             }
         }
 
-        if (m_MagicType == opponent.GetMagicType())
-        {
-            magni = 1f;
-        }
-
         result = (int)(power * magni);
-
+        Debug.Log(magni);
         return result;
     }
 

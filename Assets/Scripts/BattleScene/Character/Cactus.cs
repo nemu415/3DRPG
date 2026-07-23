@@ -27,6 +27,5 @@ public class Cactus : CharacterBase
         m_Speed = 10;
         m_MagicType = MagicType.THUNDER;
         m_Name = "ƒTƒ{ƒeƒ“";
-        m_Acted = false;
     }
 }

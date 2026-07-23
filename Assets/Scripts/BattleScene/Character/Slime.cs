@@ -29,6 +29,5 @@ public class Slime : CharacterBase
         m_Speed = 12;
         m_MagicType = MagicType.FIRE;
         m_Name = "ƒXƒ‰ƒCƒ€";
-        m_Acted = false;
     }
 }

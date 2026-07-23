@@ -27,6 +27,5 @@ public class Shell : CharacterBase
         m_Speed = 12;
         m_MagicType = MagicType.WATER;
         m_Name = "ƒgƒQ‚±‚¤‚ç";
-        m_Acted = false;
     }
 }

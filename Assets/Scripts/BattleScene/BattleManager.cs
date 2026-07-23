@@ -357,17 +357,19 @@ public class BattleManager : MonoBehaviour
                     yield return null;
                 }
 
+                }
+
                 List<CharacterBase> sortedCharacterList = characterList
-                    .OrderByDescending(c =>
-                    {
-                        if (c.IsPlayer() && (playerAction == ActionType.ITEM || playerAction == ActionType.ESCAPE))
-                        {
-                            return 1;
-                        }
-                        return 0;
-                    })
-                    .ThenByDescending(c => c.GetSpeed())
-                    .ToList();
+                       .OrderByDescending(c =>
+                       {
+                           if (c.IsPlayer() && (playerAction == ActionType.ITEM || playerAction == ActionType.ESCAPE))
+                           {
+                               return 1;
+                           }
+                           return 0;
+                       })
+                       .ThenByDescending(c => c.GetSpeed())
+                       .ToList();
 
                 for (int i = 0; i < sortedCharacterList.Count; i++)
                 {
@@ -448,15 +450,6 @@ public class BattleManager : MonoBehaviour
 
                         yield break;
                     }
-                }
-
-                for (int i = 0; i < sortedCharacterList.Count; i++)
-                {
-                    if (!sortedCharacterList[i].IsPoisoned())
-                    {
-                        sortedCharacterList[i].Damage(5);
-                    }
-                }
             }
 
         } 
@@ -470,7 +463,7 @@ public class BattleManager : MonoBehaviour
 
         yield return WaitForKeyInput();
 
-        SceneManager.LoadScene("SoshiKurosawa");
+        SceneManager.LoadScene("GameScene");
 
         yield break;
     }
@@ -481,7 +474,7 @@ public class BattleManager : MonoBehaviour
 
         yield return WaitForKeyInput();
 
-        SceneManager.LoadScene("SoshiKurosawa");
+        SceneManager.LoadScene("GameScene");
 
         yield break;
     }
