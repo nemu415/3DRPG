@@ -178,6 +178,15 @@ public class CharacterBase : MonoBehaviour
 
         animator.Play(AttackAnimationName, -1, 0f);
 
+        if (m_IsPlayer)
+        {
+            SoundManager.Instance.PlaySE(SoundManager.SEType.SE_SWORD_ATTACK);
+        }
+        else
+        {
+            SoundManager.Instance.PlaySE(SoundManager.SEType.SE_ENEMY_ATTACK);
+        }
+
         yield return opponent.StartCoroutine(opponent.Damage(m_Power));
 
         TextManager.Instance.SetStatus();
@@ -229,6 +238,8 @@ public class CharacterBase : MonoBehaviour
                     break;
             }
 
+            SoundManager.Instance.PlaySE(SoundManager.SEType.SE_MAGIC);
+
             int damage = CalcDamage(opponent, true, m_Magic);
             
             yield return opponent.StartCoroutine(opponent.Damage(damage));
@@ -238,6 +249,7 @@ public class CharacterBase : MonoBehaviour
             if (m_IsPlayer)
             {
                 this.HPHeal(m_Magic);
+                SoundManager.Instance.PlaySE(SoundManager.SEType.SE_HEAL);
             }
             else
             {
@@ -257,9 +269,9 @@ public class CharacterBase : MonoBehaviour
                     }
                 }
 
-                yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
+                SoundManager.Instance.PlaySE(SoundManager.SEType.SE_HEAL);
 
-                
+                yield return StartCoroutine(WaitForAnimation(MagicAnimationName));
 
                 target.HPHeal(m_Magic);
             }
